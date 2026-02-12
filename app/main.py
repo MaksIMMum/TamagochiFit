@@ -7,8 +7,6 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(auth.router)
 
-
-
 @app.get("/")
 async def root():
     return {"message": "Go to /login to see the page"}
