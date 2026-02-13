@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="tUvi8syF86rKXuyFQr5P" name="Page-1">
-        <mxGraphModel dx="1642" dy="510" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2160" dy="1820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -99,8 +99,35 @@
                 <mxCell id="37" value="Data Layer (DB)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry y="970" width="260" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="38" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.server;" vertex="1" parent="1">
+                <mxCell id="38" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.server;" parent="1" vertex="1">
                     <mxGeometry x="360" y="280" width="90" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Data Model&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry y="1000" width="135" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="&lt;font face=&quot;Comic Sans MS&quot;&gt;Draft 1&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry y="1030" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="User" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry y="1080" width="200" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="&lt;ul&gt;&lt;li&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;id&lt;/span&gt;&lt;/li&gt;&lt;li&gt;name&lt;/li&gt;&lt;li&gt;status&lt;/li&gt;&lt;li&gt;joinDate&lt;/li&gt;&lt;li&gt;active?&lt;/li&gt;&lt;li&gt;lastSeenTime?&lt;/li&gt;&lt;/ul&gt;" style="text;strokeColor=none;fillColor=none;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;" vertex="1" parent="66">
+                    <mxGeometry y="30" width="200" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="420" y="1710" as="sourcePoint"/>
+                        <mxPoint x="420" y="1000" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="420" y="1000"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="70" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="1710" as="sourcePoint"/>
+                        <mxPoint x="880" y="1710" as="targetPoint"/>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>
