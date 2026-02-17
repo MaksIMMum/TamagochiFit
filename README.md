@@ -1,7 +1,5 @@
 # TomogachiFit
 
-![TomogachiFit](image.png)
-
 ## Project Overview
 
 TomogachiFit is a web application built with modern technologies to deliver a seamless user experience. This repository contains the backend API and supporting infrastructure for the platform.
