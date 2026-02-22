@@ -20,7 +20,7 @@ class Pet(Base):
     level = Column(Integer, default=1)
     xp = Column(Float, default=0.0)  # Experience gained through workouts
 
-    # Vital stats
+    # stats
     health = Column(Float, default=100.0)
     happiness = Column(Float, default=100.0)
     energy = Column(Float, default=100.0)
