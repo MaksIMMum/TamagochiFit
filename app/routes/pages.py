@@ -21,3 +21,10 @@ async def dashboard_page():
     """Serve dashboard page (requires authentication)"""
     with open("app/templates/dashboard.html", "r") as f:
         return f.read()
+
+
+@router.get("/", response_class=HTMLResponse)
+async def welcome_page():
+    """welcome home page"""
+    with open("app/templates/welcome_page.html", "r") as f:
+        return f.read()
