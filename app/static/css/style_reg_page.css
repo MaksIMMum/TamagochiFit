@@ -84,3 +84,27 @@ button {
 button:hover {
   background: linear-gradient(90deg, #9333ea, #7e22ce);
 }
+
+.member-group {
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 60px;
+}
+.question {
+    font-size: 10px;
+    color: #581c87;
+}
+.first_button {
+    padding: 8px;
+    font-size: 12px;
+    width: auto;
+    margin-left: 10px;
+    background: #ab8cc8;
+    border-radius: 10px;
+  }
+
+.first_button:hover {
+  background: #9333ea;
+}

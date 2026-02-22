@@ -100,8 +100,11 @@ button:hover {
     padding: 8px;
     font-size: 12px;
     width: auto;
-    margin-left: 10;
+    margin-left: 10px;
     background: #ab8cc8;
     border-radius: 10px;
+  }
 
+.first_button:hover {
+  background: #9333ea;
 }

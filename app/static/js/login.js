@@ -1,23 +1,19 @@
-  async function handleRegister(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const fullName = document.getElementById("fullName").value;
     const messageContainer = document.getElementById("message-container");
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: username,
-          email: email,
-          password: password,
-          full_name: fullName || null
+          password: password
         })
       });
 
@@ -25,21 +21,29 @@
         const error = await response.json();
         messageContainer.innerHTML = `
           <div class="alert alert-danger" role="alert">
-            ${error.detail || "Registration failed"}
+            ${error.detail || "Login failed"}
           </div>
         `;
         return;
       }
 
+      const data = await response.json();
+
+      // Store tokens in localStorage
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      localStorage.setItem("token_type", data.token_type);
+
+      // Redirect to dashboard
       messageContainer.innerHTML = `
         <div class="alert alert-success" role="alert">
-          Account created successfully! Redirecting to login...
+          Login successful! Redirecting...
         </div>
       `;
 
       setTimeout(() => {
-        window.location.href = "/login";
-      }, 2000);
+        window.location.href = "/dashboard";
+      }, 1500);
 
     } catch (error) {
       messageContainer.innerHTML = `
@@ -50,6 +54,6 @@
     }
   }
 
-  function goToLogin() {
-    window.location.href = "/login";
+  function goToRegister() {
+    window.location.href = "/register";
   }
