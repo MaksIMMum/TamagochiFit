@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis — TamagochiFit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg:#eae6f0; --surface:#f2f0f7; --card:#e8e2f5; --purple:#7b55b8; --text:#2a1a50; --muted:#a898cc; --font:'Pixelify Sans',sans-serif; }
+body { background:var(--bg); font-family:var(--font); min-height:100vh; display:flex; flex-direction:column; }
+
+.navbar { height:60px; background:var(--surface); border-bottom:1px solid #ddd8ef; display:flex; align-items:center; justify-content:space-between; padding:0 32px; box-shadow:0 2px 12px rgba(123,85,184,.07); position:sticky; top:0; z-index:100; }
+.nav-logo { font-size:18px; font-weight:700; color:var(--text); text-decoration:none; }
+.nav-logo span { color:var(--purple); }
+.nav-links { display:flex; gap:4px; list-style:none; }
+.nav-links a { display:flex; align-items:center; gap:6px; padding:7px 16px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:600; color:var(--muted); font-family:var(--font); transition:all .15s; }
+.nav-links a:hover { background:var(--card); color:var(--text); }
+.nav-links a.active { background:var(--purple); color:#fff; }
+.nav-links svg { width:15px; height:15px; flex-shrink:0; }
+.nav-links a.active svg { fill:#fff; }
+.nav-links a:not(.active) svg { fill:var(--muted); }
+.nav-links a:hover:not(.active) svg { fill:var(--text); }
+.nav-user { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text); cursor:pointer; }
+.nav-avatar { width:32px; height:32px; background:var(--purple); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; }
+
+.stage { flex:1; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+.phone { width:300px; height:680px; background:var(--surface); border-radius:40px; overflow:hidden; box-shadow:0 24px 64px rgba(100,70,160,.18),0 4px 16px rgba(0,0,0,.08); display:flex; flex-direction:column; }
+
+.status { padding:12px 22px 4px; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:600; color:#444; }
+.s-icons { display:flex; gap:3px; align-items:center; }
+.topnav { padding:4px 22px 10px; display:flex; justify-content:space-between; align-items:center; }
+.burger { display:flex; flex-direction:column; gap:4px; cursor:pointer; }
+.burger b { display:block; border-radius:2px; background:#5a3d8a; }
+.burger b:nth-child(1) { width:20px; height:2px; }
+.burger b:nth-child(2) { width:13px; height:2px; }
+.burger b:nth-child(3) { width:20px; height:2px; }
+.topnav-title { font-size:17px; font-weight:700; color:#5a3d8a; }
+.scroll { flex:1; padding:0 16px 16px; overflow-y:auto; scrollbar-width:none; }
+.scroll::-webkit-scrollbar { display:none; }
+.botnav { display:flex; justify-content:space-around; padding:10px 8px 18px; background:var(--surface); border-top:1px solid #ddd8ef; }
+.bni { width:42px; height:38px; border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.bni.active { background:var(--purple); }
+.bni svg { width:20px; height:20px; }
+.bni.active svg { fill:#fff; }
+.bni:not(.active) svg { fill:var(--muted); }
+
+.an-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.an-title { font-size:22px; font-weight:700; color:var(--text); line-height:1.2; }
+.an-sub { font-size:13px; color:var(--muted); font-weight:500; }
+.an-date { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:14px; }
+.this-week { background:var(--card); border-radius:10px; padding:5px 10px; font-size:11px; font-weight:600; color:var(--purple); display:flex; align-items:center; gap:3px; cursor:pointer; font-family:var(--font); white-space:nowrap; border:none; }
+.chart-card { background:var(--card); border-radius:18px; padding:14px; margin-bottom:12px; }
+.chart-inner { display:flex; gap:6px; align-items:flex-end; }
+.chart-y { display:flex; flex-direction:column; justify-content:space-between; height:110px; padding-right:2px; }
+.y-l { font-size:9px; color:#b0a3cc; font-weight:500; }
+.bars { display:flex; gap:5px; align-items:flex-end; flex:1; height:110px; }
+.bar-w { display:flex; flex-direction:column; align-items:center; gap:3px; flex:1; }
+.bar-top { font-size:8px; color:var(--muted); white-space:nowrap; }
+.bar-rect { width:100%; border-radius:5px 5px 0 0; flex-shrink:0; }
+.bar-xl { font-size:9px; color:var(--muted); }
+.bar-inactive { background:#cfc7e8; }
+.bar-active { background:var(--purple); }
+.goals-card { background:var(--card); border-radius:18px; padding:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+.goals-lbl { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; margin-bottom:4px; }
+.goals-num { font-size:22px; font-weight:700; color:var(--text); }
+.goals-den { font-size:14px; color:var(--muted); }
+.gcircles { display:flex; gap:4px; margin-bottom:4px; }
+.gc { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+.gc.done { background:var(--purple); color:#fff; }
+.gc.empty { background:#d8d0ec; }
+.gdays { display:flex; gap:4px; }
+.gd { width:22px; text-align:center; font-size:9px; color:var(--muted); }
+.target-card { background:var(--card); border-radius:18px; padding:14px; }
+.target-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.target-lbl { font-size:14px; font-weight:700; color:var(--text); line-height:1.3; }
+.target-link { font-size:10px; color:var(--purple); font-weight:600; cursor:pointer; white-space:nowrap; }
+.target-list { display:flex; flex-direction:column; gap:6px; }
+.ti { display:flex; align-items:center; gap:8px; font-size:12px; color:#6a4fa0; font-weight:500; }
+.ti-n { width:17px; height:17px; border-radius:50%; background:var(--purple); color:#fff; font-size:9px; font-weight:700; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="workouts.html" class="nav-logo">Tamagoochi<span>Fit</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a></li>
+    <li><a href="workouts.html"><svg viewBox="0 0 24 24"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>Workouts</a></li>
+    <li><a href="analysis.html" class="active"><svg viewBox="0 0 24 24"><path d="M5 9v11h4v-6h6v6h4V9l-7-5z"/></svg>Analysis</a></li>
+  </ul>
+  <div class="nav-user"><div class="nav-avatar">A</div><span>Anna</span></div>
+</nav>
+
+<div class="stage">
+  <div class="phone">
+    <div class="status"><span>6:30</span><div class="s-icons"><svg viewBox="0 0 24 24" width="13" height="13" fill="#444"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 00-6 0zm-4-4l2 2a7.074 7.074 0 0110 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" width="13" height="13" fill="#444"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+    <div class="topnav"><div class="burger"><b></b><b></b><b></b></div><div class="topnav-title">Analysis</div><div style="width:20px"></div></div>
+    <div class="scroll">
+      <div class="an-head">
+        <div><div class="an-title">Statist<br>ics</div><div class="an-sub">Activity</div></div>
+        <button class="this-week">This Week ▾</button>
+      </div>
+      <div class="an-date">June 24th 2024</div>
+      <div class="chart-card">
+        <div class="chart-inner">
+          <div class="chart-y"><div class="y-l">5 Hr</div><div class="y-l">4 Hr</div><div class="y-l">3 Hr</div><div class="y-l">2 Hr</div><div class="y-l">1 Hr</div></div>
+          <div class="bars">
+            <div class="bar-w"><div class="bar-top">2 Hr</div><div class="bar-rect bar-inactive" style="height:44px"></div><div class="bar-xl">Mon</div></div>
+            <div class="bar-w"><div class="bar-top">3.1 Hr</div><div class="bar-rect bar-inactive" style="height:55px"></div><div class="bar-xl">Tue</div></div>
+            <div class="bar-w"><div class="bar-top">3.1 Hr</div><div class="bar-rect bar-inactive" style="height:62px"></div><div class="bar-xl">Wed</div></div>
+            <div class="bar-w"><div class="bar-top" style="color:var(--purple);font-weight:700;">4.1 Hr</div><div class="bar-rect bar-active" style="height:88px"></div><div class="bar-xl" style="color:var(--purple);font-weight:700;">Thu</div></div>
+            <div class="bar-w"><div class="bar-top">2.0 Hr</div><div class="bar-rect bar-inactive" style="height:44px"></div><div class="bar-xl">Fri</div></div>
+            <div class="bar-w"><div class="bar-top">3.1 Hr</div><div class="bar-rect bar-inactive" style="height:28px"></div><div class="bar-xl">Sat</div></div>
+            <div class="bar-w"><div class="bar-top">2.1 Hr</div><div class="bar-rect bar-inactive" style="height:16px"></div><div class="bar-xl">Sun</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="goals-card">
+        <div><div class="goals-lbl">Last Week<br>Goals</div><div style="margin-top:4px"><span class="goals-num">4</span><span class="goals-den">/7</span></div></div>
+        <div>
+          <div class="gcircles"><div class="gc done">✓</div><div class="gc done">✓</div><div class="gc done">✓</div><div class="gc done">✓</div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div></div>
+          <div class="gdays"><div class="gd">M</div><div class="gd">T</div><div class="gd">T</div><div class="gd">F</div><div class="gd">S</div><div class="gd">S</div><div class="gd">S</div></div>
+        </div>
+      </div>
+      <div class="target-card">
+        <div class="target-head"><div class="target-lbl">Your Weekly<br>Target</div><div class="target-link">Set Your Weekly Target ›</div></div>
+        <div class="target-list">
+          <div class="ti"><div class="ti-n">1</div><span>Cardiovascular Exercise</span></div>
+          <div class="ti"><div class="ti-n">2</div><span>Strength Training</span></div>
+          <div class="ti"><div class="ti-n">3</div><span>Flexibility and Mobility</span></div>
+          <div class="ti"><div class="ti-n">4</div><span>Rest and Recovery</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="botnav">
+      <div class="bni"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+      <div class="bni"><svg viewBox="0 0 24 24"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg></div>
+      <div class="bni active"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+      <div class="bni"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
