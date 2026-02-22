@@ -4,7 +4,6 @@ This makes sure that if you use a terminal (CLI) program installed by that packa
 
 -->(run command)
 !!!
---> pip install -r requirements.txt
 
 activate virtual environment (very important)
 --> python -m venv .venv
@@ -12,6 +11,7 @@ activate virtual environment (very important)
 check:
 --> which python
 /home/user/code/awesome-project/.venv/bin/python
+--> pip install -r requirements.txt
 
 fastapi dev app/main.py
 
