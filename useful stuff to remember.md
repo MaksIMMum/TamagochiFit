@@ -36,3 +36,30 @@ Deploying to FastAPI Cloud...
 ✅ Deployment successful!
 
 🐔 Ready the chicken! Your app is ready at https://myapp.fastapicloud.dev
+
+
+
+
+
+
+DB:
+# Create a new migration after changing models
+alembic revision --autogenerate -m "Description of change"
+
+# Apply all pending migrations
+alembic upgrade head
+
+# Apply to specific revision
+alembic upgrade abc1234
+
+# Rollback one migration
+alembic downgrade -1
+
+# See current version
+alembic current
+
+# See all migrations
+alembic history
+
+# Show migration details
+alembic show abc1234
