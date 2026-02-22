@@ -92,6 +92,7 @@ TamagochiFit/
 4. **Set up environment variables**
    ```bash
    cp .env.example .env
+
    ```
    Edit `.env` and fill in your values:
    ```env
