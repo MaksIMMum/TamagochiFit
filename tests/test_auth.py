@@ -5,7 +5,7 @@ BASE_URL = "http://localhost:8000/api/auth"
 
 def test_register():
     """Test user registration"""
-    print("1️⃣ Testing Registration...")
+    print("Testing Registration...")
 
     user_data = {
         "username": "testuser",
@@ -16,13 +16,17 @@ def test_register():
 
     response = requests.post(f"{BASE_URL}/register", json=user_data)
     print(f"Status: {response.status_code}")
-    print(f"Response: {json.dumps(response.json(), indent=2)}")
-
+    # In test_auth.py
+    print(f"Status: {response.status_code}")
+    try:
+        print(f"Response: {response.json()}")
+    except:
+        print(f"Raw Error Content: {response.text}")
     return response.json() if response.status_code == 201 else None
 
 def test_login():
     """Test user login"""
-    print("\n2️⃣ Testing Login...")
+    print("\nTesting Login...")
 
     login_data = {
         "username": "testuser",
@@ -38,7 +42,7 @@ def test_login():
 
 def test_get_current_user(token):
     """Test getting current user info"""
-    print("\n3️⃣ Testing Get Current User...")
+    print("\nTesting Get Current User...")
 
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(f"{BASE_URL}/me", headers=headers)
@@ -47,7 +51,7 @@ def test_get_current_user(token):
 
 def test_with_invalid_token():
     """Test with invalid token"""
-    print("\n4️⃣ Testing Invalid Token...")
+    print("\nTesting Invalid Token...")
 
     headers = {"Authorization": "Bearer invalid_token"}
     response = requests.get(f"{BASE_URL}/me", headers=headers)
@@ -55,7 +59,7 @@ def test_with_invalid_token():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
 
 if __name__ == "__main__":
-    print("🚀 Starting Authentication Tests\n")
+    print("Starting Authentication Tests\n")
 
     # Register
     test_register()
