@@ -2,10 +2,3 @@ fastapi[standard]==0.129.2
 pydantic==2.12.5
 httpx==0.28.1
 pytest==9.0.2
-sqlalchemy==2.0.46
-alembic==1.18.4
-python-jose[cryptography]==3.5.0
-bcrypt==5.0.0
-python-dotenv==1.2.1
-email-validator==2.3.0
-requests==2.32.5
