@@ -14,7 +14,7 @@ from app.models import Base
 
 config = context.config
 
-# ✅ KEY: Get DATABASE_URL from environment variable
+# Get DATABASE_URL from environment variable
 # This allows different databases for dev, test, production
 database_url = os.getenv(
     "DATABASE_URL",
@@ -48,7 +48,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        render_as_batch=True,  # ✅ CRITICAL for SQLite!
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
@@ -64,17 +64,17 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
-        poolclass=pool.StaticPool,  # ✅ Use StaticPool for SQLite
+        poolclass=pool.StaticPool,
     )
 
-    # ✅ Register SQLite pragma listener
+    # Register SQLite pragma listener
     event.listen(Engine, "connect", receive_connect)
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            render_as_batch=True,  # ✅ CRITICAL for SQLite!
+            render_as_batch=True,
         )
 
         with context.begin_transaction():
