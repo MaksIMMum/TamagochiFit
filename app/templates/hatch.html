@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hatch</title>
+  <link rel="stylesheet" href="../static/css/hatch.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      
+      <!-- Етап яйця -->
+      <div class="stage egg-stage">
+        <h1>Your egg is ready!</h1>
+        <p>Click on the egg to help it hatch</p>
+        <div class="egg-wrapper">
+          <img id="eggImage" src="../static/images/cosmetics/egg2.png" alt="Egg">
+          <!-- ще додам картинки з етапами тріщин egg2_2.png, egg2_3.png, egg2_3.png, egg2_4.png, egg2_5.png-->
+          <p class="click-count">Clicked: 0/5 times</p>
+        </div>
+      </div>
+
+      <!-- Етап вилуплення -->
+      <div class="stage hatching-stage hidden">
+        <img id="dragonGif" src="../static/images/cosmetics/character1.gif" alt="Character" class="character hidden">
+        <p>Congratulations! Your companion is born!</p>
+      </div>
+
+      <!-- Етап імені -->
+      <div class="stage name-stage hidden">
+        <h2>Give your companion a name</h2>
+        <form id="nameForm">
+          <label for="petName">Name</label>
+          <input type="text" id="petName" placeholder="Example: Felix" maxlength="20" required>
+          <button type="submit">Start</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
