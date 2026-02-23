@@ -1,0 +1,100 @@
+/* Загальні стилі */
+body {
+  margin: 0;
+  font-family: "Press Start 2P", sans-serif;
+  background: linear-gradient(135deg, #dcb1ff, #ffe680, #faf5ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  padding: 24px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+h1, h2 {
+  color: #5b2dd6;
+  line-height: 1.5;
+}
+
+p {
+  color: #7d5dd6;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Яйце */
+.egg-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#eggImage {
+  width: 150px;
+  transition: transform 0.2s;
+}
+
+#eggImage:active {
+  transform: scale(1.1); /* ефект натискання */
+}
+
+/* Вилуплення */
+.hatching-stage .character {
+  width: 200px; /* під GIF або картинку персонажа */
+  animation: appear 0.5s forwards;
+}
+
+@keyframes appear {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Ім'я персонажа */
+.name-stage img {
+  width: 150px; /* можна змінити під твій GIF */
+  margin-bottom: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 2px solid #dcb1ff;
+  text-align: center;
+}
+
+button {
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  color: white;
+  background: linear-gradient(to right, #8b5cf6, #5b2dd6);
+  cursor: pointer;
+}
+
+button:hover {
+  background: linear-gradient(to right, #5b2dd6, #3a1a9c);
+}
