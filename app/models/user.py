@@ -27,5 +27,8 @@ class User(Base):
     last_login = Column(DateTime(timezone=True), nullable=True)
 
     pet = relationship("Pet", back_populates="owner", uselist=False, cascade="all, delete-orphan")
+
+    activities = relationship("Activity", back_populates="user", cascade="all, delete-orphan")
+
     def __repr__(self):
         return f"<User {self.username}>"
