@@ -32,7 +32,7 @@ class Pet(Base):
     last_interacted = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # ORM Relationship
-    owner = relationship("User", back_populates="pet")
+    #owner = relationship("User", back_populates="pet")
 
     def __repr__(self):
         return f"<Pet {self.name} (Lvl {self.level})>"

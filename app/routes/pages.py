@@ -46,3 +46,24 @@ async def analysis_page():
     """Serve analysis page"""
     with open("app/templates/analysis.html", "r", encoding="utf-8") as f:
         return f.read()
+
+
+
+@router.get("/profile", response_class=HTMLResponse)
+async def profile_page():
+    """Serve profile page"""
+    with open("app/templates/profile.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@router.get("/settings", response_class=HTMLResponse)
+async def settings_page():
+    """Serve settings page"""
+    with open("app/templates/settings.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@router.get("/hatch", response_class=HTMLResponse)
+async def hatch_page():
+    """Serve hatch page"""
+    with open("app/templates/hatch.html", "r", encoding="utf-8") as f:
+        return f.read()
