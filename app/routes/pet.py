@@ -44,22 +44,6 @@ async def create_pet(
 
     return new_pet
 
-@router.get("/me", response_model=PetResponse)
-async def get_my_pet(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Get current user's pet"""
-    pet = db.query(Pet).filter(Pet.user_id == current_user.id).first()
-
-    if not pet:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Pet not found"
-        )
-
-    return pet
-
 @router.get("/my-pet", response_model=PetResponse)
 async def get_my_pet(
     current_user: User = Depends(get_current_user),
