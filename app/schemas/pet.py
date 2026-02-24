@@ -2,19 +2,23 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
-
+# Request Schemas
 class PetCreate(BaseModel):
-    """Schema for creating a new pet."""
+    """Schema for creating a pet"""
     name: str = Field(..., min_length=1, max_length=50)
+    species: Optional[str] = Field("egg", max_length=50)
 
     class Config:
         json_schema_extra = {
-            "example": {"name": "Felix"}
+            "example": {
+                "name": "Felix",
+                "species": "egg"
+            }
         }
 
-
+# Response Schemas
 class PetResponse(BaseModel):
-    """Schema returned for all pet endpoints."""
+    """Schema for pet response"""
     id: int
     user_id: int
     name: str
