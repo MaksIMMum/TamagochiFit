@@ -3,6 +3,7 @@
 db.sqlite3
 __pycache__
 .pytest_cache
+.pyc
 *.pyc
 # Environment variables
 .env
