@@ -5,11 +5,17 @@ from app.schemas.user import (
     UserResponse,
     UserDetailResponse
 )
+from app.schemas.pet import (
+    PetCreate,
+    PetResponse
+)
 
 __all__ = [
     "UserRegister",
     "UserLogin",
     "TokenResponse",
     "UserResponse",
-    "UserDetailResponse"
+    "UserDetailResponse",
+    "PetCreate",
+    "PetResponse"
 ]

@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.database import Base, engine
-from app.routes import auth, pages
-from app.models import User  # Import models for table creation
+from app.routes import auth, pages, pet
+from app.models import User, Pet  # Import all models for Alembic awareness
 from config import settings
 
-# Create database tables
+# Create database tables (fallback — migrations are the source of truth)
 Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI app
@@ -19,7 +19,7 @@ app = FastAPI(
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # exact origins?
+    allow_origins=["*"],  # TODO: restrict to specific domain before deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,6 +31,8 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Include routers
 app.include_router(auth.router)
 app.include_router(pages.router)
+app.include_router(pet.router)
+
 # Root endpoint
 @app.get("/")
 async def root():

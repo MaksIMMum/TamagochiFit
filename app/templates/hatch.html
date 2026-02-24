@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hatch</title>
+  <link rel="stylesheet" href="/static/css/hatch.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+
+      <!-- Stage 1: Egg clicking -->
+      <div class="stage egg-stage" id="eggStage">
+        <h1>Your egg is ready!</h1>
+        <p>Click on the egg to help it hatch</p>
+        <div class="egg-wrapper">
+          <img id="eggImage" src="/static/images/egg2.png" alt="Egg">
+          <p class="click-count" id="clickCount">Clicked: 0/5 times</p>
+        </div>
+      </div>
+
+      <!-- Stage 2: Hatching animation -->
+      <div class="stage hatching-stage hidden" id="hatchingStage">
+        <p>Congratulations! Your companion is born!</p>
+        <img
+          id="characterGif"
+          src="/static/images/character1.gif"
+          alt="Character"
+          class="character"
+        >
+      </div>
+
+      <!-- Stage 3: Name your pet -->
+      <div class="stage name-stage hidden" id="nameStage">
+        <h2>Give your companion a name</h2>
+        <div id="nameError" style="color:#e05c7a; font-size:12px; margin-bottom:10px; display:none;"></div>
+        <form id="nameForm">
+          <label for="petName">Name</label>
+          <input
+            type="text"
+            id="petName"
+            placeholder="Example: Felix"
+            maxlength="20"
+            minlength="1"
+            required
+          >
+          <button type="submit" id="submitBtn">Start!</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    function getToken() {
+      return localStorage.getItem("access_token");
+    }
+
+    function showStage(stageId) {
+      document.querySelectorAll(".stage").forEach(s => s.classList.add("hidden"));
+      document.getElementById(stageId).classList.remove("hidden");
+    }
+
+    // ── Egg clicking ─────────────────────────────────────────────────────────
+
+    const CLICKS_NEEDED = 5;
+    // If you add crack images, list them here in order:
+    // const crackImages = [
+    //   "/static/images/cosmetics/egg2_2.png",
+    //   "/static/images/cosmetics/egg2_3.png",
+    //   "/static/images/cosmetics/egg2_4.png",
+    //   "/static/images/cosmetics/egg2_5.png",
+    // ];
+
+    let clickCount = 0;
+
+    const eggImage   = document.getElementById("eggImage");
+    const clickLabel = document.getElementById("clickCount");
+
+    eggImage.addEventListener("click", function onClick() {
+      clickCount++;
+      clickLabel.textContent = `Clicked: ${clickCount}/${CLICKS_NEEDED} times`;
+
+      // Swap crack image if available
+      // if (crackImages[clickCount - 1]) {
+      //   eggImage.src = crackImages[clickCount - 1];
+      // }
+
+      // Wiggle animation feedback
+      eggImage.style.transform = "scale(1.15) rotate(5deg)";
+      setTimeout(() => eggImage.style.transform = "", 150);
+
+      if (clickCount >= CLICKS_NEEDED) {
+        eggImage.removeEventListener("click", onClick);
+        setTimeout(showHatchingStage, 200);
+      }
+    });
+
+    // ── Hatching stage ───────────────────────────────────────────────────────
+
+    function showHatchingStage() {
+      showStage("hatchingStage");
+      // After 2.5 seconds move on to the naming stage
+      setTimeout(() => showStage("nameStage"), 2500);
+    }
+
+    // ── Name form → API call ─────────────────────────────────────────────────
+
+    document.getElementById("nameForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const petName   = document.getElementById("petName").value.trim();
+      const submitBtn = document.getElementById("submitBtn");
+      const errorDiv  = document.getElementById("nameError");
+
+      if (!petName) return;
+
+      const token = getToken();
+      if (!token) {
+        // Not logged in — send them back to login
+        window.location.href = "/login";
+        return;
+      }
+
+      // Disable button while request is in flight
+      submitBtn.disabled     = true;
+      submitBtn.textContent  = "Creating...";
+      errorDiv.style.display = "none";
+
+      try {
+        const response = await fetch("/api/pet/create", {
+          method: "POST",
+          headers: {
+            "Content-Type":  "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ name: petName })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+
+          // If the user already has a pet just send them home
+          if (response.status === 400 && data.detail === "User already has a pet") {
+            window.location.href = "/home";
+            return;
+          }
+
+          throw new Error(data.detail || "Failed to create pet");
+        }
+
+        // Success — head to the home page
+        window.location.href = "/home";
+
+      } catch (err) {
+        errorDiv.textContent   = err.message;
+        errorDiv.style.display = "block";
+        submitBtn.disabled     = false;
+        submitBtn.textContent  = "Start!";
+      }
+    });
+  </script>
+</body>
+</html>
