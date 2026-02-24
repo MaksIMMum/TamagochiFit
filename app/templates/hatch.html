@@ -140,7 +140,7 @@
             "Content-Type":  "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify({ name: petName })
+          body: JSON.stringify({ name: petName, species: "egg" })
         });
 
         if (!response.ok) {

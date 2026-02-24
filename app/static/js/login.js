@@ -36,6 +36,7 @@ async function handleLogin(event) {
 
     // Step 2: Check if the user already has a pet
     const petResponse = await fetch("/api/pet/me", {
+      method: "GET",
       headers: { "Authorization": `Bearer ${data.access_token}` }
     });
 
