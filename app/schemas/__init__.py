@@ -9,7 +9,7 @@ from app.schemas.pet import (
     PetCreate,
     PetResponse
 )
-
+from app.schemas.workout import WorkoutLogCreate, WorkoutLogResponse, WorkoutLogWithXP, StreakResponse
 __all__ = [
     "UserRegister",
     "UserLogin",
