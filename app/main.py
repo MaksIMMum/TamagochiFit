@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.database import Base, engine
-from app.routes import auth, pages, pet, workout
+from app.routes import auth, pages, pet, workout, social
 from app.models import User, Pet  # Import all models for Alembic awareness
 from config import settings
 
@@ -33,6 +33,7 @@ app.include_router(auth.router)
 app.include_router(pages.router)
 app.include_router(pet.router)
 app.include_router(workout.router)
+app.include_router(social.router)
 
 # Root endpoint
 @app.get("/")
