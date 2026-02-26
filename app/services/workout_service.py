@@ -48,6 +48,11 @@ def log_workout(db: Session, user_id: int, workout_data: WorkoutLogCreate) -> tu
     xp_awarded = _calculate_xp(workout_data)
     try:
         pet_service.award_xp(db, user_id, xp_awarded)
+        coins_earned = max(1, int(xp_awarded / 10))
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            food_service.award_coins(db, user, coins_earned)
+
         pet_service.update_pet_stats(
             db, user_id,
             happiness_delta=+10.0,
