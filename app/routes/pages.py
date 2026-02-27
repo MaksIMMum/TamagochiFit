@@ -22,11 +22,28 @@ async def dashboard_page():
     with open("app/templates/dashboard.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@router.get("/shop", response_class=HTMLResponse)
+async def shop():
+    """shop"""
+    with open("app/templates/shop.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@router.get("/leaderboard", response_class=HTMLResponse)
+async def leaderboard_page():
+    """Serve leaderboard page"""
+    with open("app/templates/leaderboard.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@router.get("/meals", response_class=HTMLResponse)
+async def meals_page():
+    """Serve meals page"""
+    with open("app/templates/meals.html", "r", encoding="utf-8") as f:
+        return f.read()
 
 @router.get("/", response_class=HTMLResponse)
 async def welcome_page():
     """welcome home page"""
-    with open("app/templates/welcome_page.html", "r", encoding="utf-8") as f:
+    with open("app/templates/welcome.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @router.get("/home", response_class=HTMLResponse)

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - TamagochiFit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="/static/js/auth.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #eae6f0;
+      --surface: #f2f0f7;
+      --card: #e8e2f5;
+      --purple: #7b55b8;
+      --purple-dark: #5b2dd6;
+      --purple-light: #a070e0;
+      --text: #2a1a50;
+      --muted: #a898cc;
+      --accent: #ffd93d;
+      --cream: #fff8e1;
+      --pink: #e05c7a;
+      --success: #4caf50;
+    }
+
+    body { font-family:'Pixelify Sans',sans-serif; background:var(--bg); min-height:100vh; display:flex; flex-direction:column; }
+
+    /* ── Pixel Bar ── */
+    .pixel-bar {
+      height: 8px;
+      width: 100%;
+      display: block;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  10px,
+        var(--purple-light) 10px, var(--purple-light) 20px,
+        var(--accent)       20px, var(--accent)       28px,
+        var(--cream)        28px, var(--cream)        36px,
+        var(--pink)         36px, var(--pink)         44px,
+        var(--purple-light) 44px, var(--purple-light) 54px
+      );
+    }
+
+    /* ── Navbar ── */
+    .navbar { background:var(--surface); border-bottom:3px solid var(--card); padding:0 30px; box-shadow:0 2px 10px rgba(123,85,184,.08); position:sticky; top:0; z-index:100; }
+    .nav-content { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { font-family:'Press Start 2P',cursive; font-size:16px; color:var(--text); text-decoration:none; }
+    .nav-logo span { color:var(--purple); }
+    .nav-links { display:flex; gap:4px; list-style:none; }
+    .nav-links a { display:flex; align-items:center; gap:5px; padding:9px 14px; border-radius:12px; text-decoration:none; font-size:13px; font-weight:600; color:var(--muted); transition:all .2s; }
+    .nav-links a:hover  { background:var(--card); color:var(--text); }
+    .nav-links a.active { background:var(--purple); color:white; }
+    .nav-user { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--text); }
+    .nav-avatar { width:36px; height:36px; background:var(--purple); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; }
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; background:none; border:none; }
+    .hamburger span { display:block; width:24px; height:3px; background:var(--text); border-radius:2px; }
+    .mobile-menu { display:none; flex-direction:column; background:var(--surface); border-bottom:3px solid var(--card); padding:12px 20px 16px; gap:6px; position:sticky; top:64px; z-index:99; box-shadow:0 4px 12px rgba(123,85,184,.10); }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; text-decoration:none; font-size:15px; font-weight:700; color:var(--muted); transition:all .15s; }
+    .mobile-menu a:hover  { background:var(--card); color:var(--text); }
+    .mobile-menu a.active { background:var(--purple); color:white; }
+
+    /* ── Main ── */
+    .main-content { flex:1; max-width:1200px; width:100%; margin:0 auto; padding:30px 20px 40px; }
+
+    /* ── Profile Header ── */
+    .profile-header {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Vertical pixel bar on left edge of profile header */
+    .profile-header::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 8px;
+      background-image: repeating-linear-gradient(
+        180deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  12px,
+        var(--accent)       12px, var(--accent)        20px,
+        var(--pink)         20px, var(--pink)          28px,
+        var(--purple-light) 28px, var(--purple-light)  40px,
+        var(--cream)        40px, var(--cream)         48px
+      );
+      border-radius: 22px 0 0 22px;
+    }
+
+    .profile-avatar-large {
+      width:150px; height:150px;
+      background:linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-light) 100%);
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:70px; color:white; font-weight:700;
+      box-shadow:0 8px 30px rgba(123,85,184,.3);
+      flex-shrink:0;
+    }
+
+    .profile-info { flex:1; padding-left: 8px; }
+    .profile-name  { font-family:'Press Start 2P',cursive; font-size:30px; color:var(--text); margin-bottom:10px; }
+    .profile-email { font-size:16px; color:var(--muted); margin-bottom:20px; }
+
+    .profile-badges { display:flex; gap:12px; flex-wrap:wrap; }
+    .badge { background:var(--card); padding:10px 20px; border-radius:20px; font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; }
+    .badge.premium  { background:var(--accent); }
+    .badge.verified { background:var(--success); color:white; }
+
+    /* ── Stats ── */
+    .stats-section  { margin-bottom:30px; }
+    .section-title  { font-size:22px; font-weight:700; color:var(--text); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+      text-align: center;
+    }
+
+    .stat-icon  { font-size:44px; margin-bottom:12px; }
+    .stat-value { font-size:30px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .stat-label { font-size:14px; color:var(--muted); font-weight:600; }
+
+    /* ── Evolution Skill Tree ─────────────────────────────── */
+    .pet-journey {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 36px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+    }
+
+    .journey-subtitle { color:var(--muted); margin-bottom:30px; font-size:15px; line-height:1.6; }
+
+    /* The skill tree container */
+    .skill-tree {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Vertical spine */
+    .skill-tree::before {
+      content: '';
+      position: absolute;
+      left: 42px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: repeating-linear-gradient(
+        180deg,
+        var(--purple-light) 0px, var(--purple-light) 8px,
+        transparent 8px, transparent 14px
+      );
+      border-radius: 2px;
+      z-index: 0;
+    }
+
+    /* Each evolution stage row */
+    .evo-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 14px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Circle node on the spine */
+    .evo-node {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      border: 4px solid var(--card);
+      background: white;
+      box-shadow: 0 2px 8px rgba(123,85,184,.10);
+      transition: all 0.3s;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Horizontal connector from node to card */
+    .evo-connector {
+      width: 24px; height: 4px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      background: var(--card);
+      transition: background 0.3s;
+    }
+
+    /* Stage info card */
+    .evo-card {
+      flex: 1;
+      background: white;
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 3px solid var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all 0.2s;
+      opacity: 0.45;
+    }
+
+    .evo-card-info { flex: 1; }
+    .evo-card-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .evo-card-req  { font-size:13px; color:var(--muted); font-weight:600; }
+
+    .evo-badge {
+      padding: 7px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--muted);
+      color: white;
+      white-space: nowrap;
+    }
+
+    /* ── COMPLETED stage ── */
+    .evo-row.completed .evo-node {
+      background: linear-gradient(135deg, #4caf50, #66bb6a);
+      border-color: #4caf50;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(76,175,80,.35);
+    }
+    .evo-row.completed .evo-connector { background: #4caf50; }
+    .evo-row.completed .evo-card      { opacity:1; border-color: #4caf50; background: #f4fdf7; }
+    .evo-row.completed .evo-badge     { background: #4caf50; }
+
+    /* ── CURRENT (active) stage ── */
+    .evo-row.current .evo-node {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple-light));
+      border-color: var(--purple);
+      color: white;
+      box-shadow: 0 0 0 4px rgba(123,85,184,.25), 0 4px 14px rgba(123,85,184,.3);
+      animation: pulse-node 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-node {
+      0%,100% { box-shadow: 0 0 0 4px rgba(123,85,184,.25), 0 4px 14px rgba(123,85,184,.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(123,85,184,.15), 0 4px 20px rgba(123,85,184,.4); }
+    }
+
+    .evo-row.current .evo-connector { background: var(--purple); }
+    .evo-row.current .evo-card {
+      opacity:1;
+      border-color: var(--purple);
+      box-shadow: 0 4px 16px rgba(123,85,184,.18);
+    }
+    .evo-row.current .evo-badge {
+      background: var(--purple);
+      animation: badge-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes badge-bounce {
+      0%,100% { transform:scale(1); }
+      50%      { transform:scale(1.06); }
+    }
+
+    /* ── LOCKED stages are default (semi-transparent) ── */
+
+    /* XP progress between current and next unlock */
+    .evo-xp-bar-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 0 0 0 104px;
+      margin-top: -6px;
+      margin-bottom: 4px;
+      width: 100%;
+    }
+
+    .evo-row.current + .evo-xp-bar-wrap { display: flex; }
+
+    .evo-xp-track {
+      flex: 1;
+      height: 8px;
+      background: var(--card);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .evo-xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--purple-light));
+      border-radius: 6px;
+      transition: width 0.6s ease;
+    }
+
+    .evo-xp-label { font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap; }
+
+    /* ── Actions ── */
+    .action-buttons { display:flex; gap:15px; margin-top:24px; }
+    .action-btn {
+      flex:1; padding:15px;
+      background:var(--card); color:var(--text);
+      border:2px solid var(--card); border-radius:12px;
+      font-family:'Pixelify Sans',sans-serif; font-size:15px; font-weight:700;
+      cursor:pointer; transition:all .2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .action-btn:hover { border-color:var(--purple); transform:translateY(-2px); }
+    .action-btn.danger { color:var(--pink); }
+
+    /* ── Responsive ── */
+    @media (max-width:768px) {
+      .profile-header { flex-direction:column; text-align:center; }
+      .profile-header::before { display:none; }
+      .profile-name { font-size:22px; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .action-buttons { flex-direction:column; }
+      .skill-tree::before { left:34px; }
+      .evo-node { width:48px; height:48px; font-size:24px; }
+    }
+
+    @media (max-width:640px) {
+      .nav-links { display:none; }
+      .hamburger { display:flex; }
+      .main-content { padding-bottom:80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pixel-bar"></div>
+
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">🥚 Tamagoochi<span>Fit</span></a>
+      <ul class="nav-links">
+        <li><a href="/home">🏠 Home</a></li>
+        <li><a href="/workouts">💪 Workouts</a></li>
+        <li><a href="/meals">🍽️ Meals</a></li>
+        <li><a href="/shop">🛒 Shop</a></li>
+        <li><a href="/leaderboard">🏆 Leaderboard</a></li>
+        <li><a href="/profile" class="active">👤 Profile</a></li>
+      </ul>
+      <div class="nav-user">
+        <div class="nav-avatar" id="userAvatarNav">U</div>
+        <span id="userNameNav">User</span>
+        <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/home">🏠 Home</a>
+    <a href="/workouts">💪 Workouts</a>
+    <a href="/meals">🍽️ Meals</a>
+    <a href="/shop">🛒 Shop</a>
+    <a href="/leaderboard">🏆 Leaderboard</a>
+    <a href="/profile" class="active">👤 Profile</a>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar-large" id="profileAvatar">U</div>
+      <div class="profile-info">
+        <h1 class="profile-name" id="profileName">Loading...</h1>
+        <p class="profile-email" id="profileEmail">user@example.com</p>
+        <div class="profile-badges">
+          <div class="badge">📅 Joined <span id="joinDate" style="margin-left:4px">Jan 2026</span></div>
+          <div class="badge">🔥 <span id="activeStreak">0</span> Day Streak</div>
+          <div class="badge">💰 <span id="userCoins">0</span> Coins</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-section">
+      <h2 class="section-title">📊 Your Stats</h2>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">💪</div><div class="stat-value" id="totalWorkouts">0</div><div class="stat-label">Total Workouts</div></div>
+        <div class="stat-card"><div class="stat-icon">🍽️</div><div class="stat-value" id="totalMeals">0</div><div class="stat-label">Meals Logged</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="totalXP">0</div><div class="stat-label">Total XP Earned</div></div>
+        <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="userRank">-</div><div class="stat-label">Global Rank</div></div>
+        <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value" id="longestStreak">0</div><div class="stat-label">Best Streak</div></div>
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="daysActive">0</div><div class="stat-label">Days Active</div></div>
+      </div>
+    </div>
+
+    <!-- Pet Evolution Journey – Skill Tree -->
+    <div class="pet-journey">
+      <h2 class="section-title">🌟 Pet Evolution Journey</h2>
+      <p class="journey-subtitle">
+        Your pet evolves as you level up through workouts and healthy habits!<br>
+        <strong style="color:var(--purple)">Stage 1 (Egg)</strong> is already hatched — you're currently raising your baby pet.
+      </p>
+
+      <div class="skill-tree" id="skillTree">
+
+        <!-- Stage 1: Egg – ALWAYS COMPLETED (hatched at onboarding) -->
+        <div class="evo-row completed" id="row-egg">
+          <div class="evo-node">✓</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">🥚 Egg</div>
+              <div class="evo-card-req">Stage 1 · Level 1 · Starting point</div>
+            </div>
+            <div class="evo-badge">✓ Hatched!</div>
+          </div>
+        </div>
+
+        <!-- Stage 2: Baby / Newly Hatched – CURRENT active stage by default -->
+        <div class="evo-row current" id="row-cracked">
+          <div class="evo-node">🐣</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">🐣 Baby Hatchling</div>
+              <div class="evo-card-req">Stage 2 · Level 2 · Newly born</div>
+            </div>
+            <div class="evo-badge">⚡ Active</div>
+          </div>
+        </div>
+
+        <!-- XP progress bar between current and next -->
+        <div class="evo-xp-bar-wrap">
+          <div class="evo-xp-track">
+            <div class="evo-xp-fill" id="evoXpFill" style="width:30%"></div>
+          </div>
+          <div class="evo-xp-label" id="evoXpLabel">Lvl 2 → 3</div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="evo-row" id="row-chick">
+          <div class="evo-node">🐱</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">🐱 Kitten</div>
+              <div class="evo-card-req">Stage 3 · Level 3 · Growing strong</div>
+            </div>
+            <div class="evo-badge">🔒 Level 3</div>
+          </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="evo-row" id="row-kitten">
+          <div class="evo-node">😺</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">😺 Playful Cat</div>
+              <div class="evo-card-req">Stage 4 · Level 5 · Becoming fierce</div>
+            </div>
+            <div class="evo-badge">🔒 Level 5</div>
+          </div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="evo-row" id="row-cat">
+          <div class="evo-node">😎</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">😎 Cool Cat</div>
+              <div class="evo-card-req">Stage 5 · Level 8 · Fully grown</div>
+            </div>
+            <div class="evo-badge">🔒 Level 8</div>
+          </div>
+        </div>
+
+        <!-- Stage 6 – Final -->
+        <div class="evo-row" id="row-cool">
+          <div class="evo-node">🌟</div>
+          <div class="evo-connector"></div>
+          <div class="evo-card">
+            <div class="evo-card-info">
+              <div class="evo-card-name">🌟 Legend</div>
+              <div class="evo-card-req">Stage 6 · Level 12 · Final form!</div>
+            </div>
+            <div class="evo-badge">🔒 Level 12</div>
+          </div>
+        </div>
+
+      </div><!-- /skill-tree -->
+
+      <div class="action-buttons">
+        <button class="action-btn" onclick="window.location.href='/home'">🏠 View Pet</button>
+        <button class="action-btn" onclick="window.location.href='/leaderboard'">🏆 Leaderboard</button>
+        <button class="action-btn danger" onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <script>
+    const token = localStorage.getItem('access_token');
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+    // Ordered stages for dynamic update
+    const STAGES = [
+      { rowId: 'row-egg',    minLevel: 1,  badgeId: null,          node: '✓',  completedNode: '✓' },
+      { rowId: 'row-cracked',minLevel: 2,  badge: '⚡ Active',      node: '🐣' },
+      { rowId: 'row-chick',  minLevel: 3,  badge: '🔒 Level 3',    node: '🐱' },
+      { rowId: 'row-kitten', minLevel: 5,  badge: '🔒 Level 5',    node: '😺' },
+      { rowId: 'row-cat',    minLevel: 8,  badge: '🔒 Level 8',    node: '😎' },
+      { rowId: 'row-cool',   minLevel: 12, badge: '🔒 Level 12',   node: '🌟' },
+    ];
+
+    function updateEvolution(level, xp) {
+      // Remove all state classes first
+      STAGES.forEach(s => {
+        const row = document.getElementById(s.rowId);
+        row.classList.remove('completed', 'current');
+      });
+
+      let currentIdx = 0;
+      STAGES.forEach((s, i) => {
+        const row  = document.getElementById(s.rowId);
+        const node = row.querySelector('.evo-node');
+        const badge= row.querySelector('.evo-badge');
+
+        if (level > s.minLevel) {
+          // fully passed — mark completed
+          row.classList.add('completed');
+          node.textContent  = '✓';
+          badge.textContent = '✓ Achieved';
+        } else if (level >= s.minLevel) {
+          // currently at this stage
+          row.classList.add('current');
+          node.textContent  = s.node;
+          badge.textContent = i === 0 ? '✓ Hatched!' : '⚡ Active';
+          currentIdx = i;
+        } else {
+          node.textContent  = s.node;
+          badge.textContent = s.badge || `🔒 Level ${s.minLevel}`;
+        }
+      });
+
+      // XP progress bar towards next stage
+      const nextStage = STAGES[currentIdx + 1];
+      if (nextStage) {
+        const pct = Math.min(100, Math.round(((level) / nextStage.minLevel) * 100));
+        document.getElementById('evoXpFill').style.width  = pct + '%';
+        document.getElementById('evoXpLabel').textContent = `Lvl ${level} → ${nextStage.minLevel}`;
+      }
+    }
+
+    async function loadProfile() {
+      try {
+        const [userRes, petRes, coinsRes, streakRes, historyRes] = await Promise.all([
+          fetch('/api/auth/me',                    { headers:{ 'Authorization':`Bearer ${token}` } }),
+          fetch('/api/pet/me',                     { headers:{ 'Authorization':`Bearer ${token}` } }),
+          fetch('/api/food/coins',                 { headers:{ 'Authorization':`Bearer ${token}` } }),
+          fetch('/api/workout/streak',             { headers:{ 'Authorization':`Bearer ${token}` } }),
+          fetch('/api/workout/history?limit=1000', { headers:{ 'Authorization':`Bearer ${token}` } })
+        ]);
+
+        if (userRes.ok) {
+          const user = await userRes.json();
+          document.getElementById('profileName').textContent   = user.full_name || user.username;
+          document.getElementById('profileEmail').textContent  = user.email;
+          document.getElementById('profileAvatar').textContent = user.username.charAt(0).toUpperCase();
+          document.getElementById('userAvatarNav').textContent = user.username.charAt(0).toUpperCase();
+          document.getElementById('userNameNav').textContent   = user.username;
+          const joined = new Date(user.created_at);
+          document.getElementById('joinDate').textContent = joined.toLocaleDateString('en-US',{month:'short',year:'numeric'});
+          document.getElementById('daysActive').textContent = Math.floor((new Date()-joined)/(864e5));
+        }
+
+        if (petRes.ok) {
+          const pet = await petRes.json();
+          document.getElementById('totalXP').textContent = Math.floor(pet.xp);
+          updateEvolution(pet.level, pet.xp);
+        }
+
+        if (coinsRes.ok)  { const {coins} = await coinsRes.json(); document.getElementById('userCoins').textContent = coins; }
+        if (streakRes.ok) { const s = await streakRes.json(); document.getElementById('activeStreak').textContent = s.current_streak; document.getElementById('longestStreak').textContent = s.longest_streak; }
+        if (historyRes.ok){ const w = await historyRes.json(); document.getElementById('totalWorkouts').textContent = w.length; }
+
+        try {
+          const mealRes = await fetch('/api/food/meal/history?limit=1000', { headers:{ 'Authorization':`Bearer ${token}` } });
+          if (mealRes.ok) { const meals = await mealRes.json(); document.getElementById('totalMeals').textContent = meals.length; }
+        } catch(e) {}
+
+      } catch(e) { console.error(e); }
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

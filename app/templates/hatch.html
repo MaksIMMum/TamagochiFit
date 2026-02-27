@@ -3,168 +3,435 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hatch</title>
-  <link rel="stylesheet" href="/static/css/hatch.css">
+  <title>Hatch Your Pet - TamagochiFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
   <script src="/static/js/auth.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --purple-dark: #5b2dd6;
+      --purple-mid: #7b55b8;
+      --purple-light: #a070e0;
+      --purple-ultra-light: #ddd0f5;
+      --pink: #e05c7a;
+      --yellow: #ffd93d;
+      --cream: #fff5e1;
+      --text-dark: #2a1a50;
+    }
+
+    body {
+      font-family: 'Pixelify Sans', sans-serif;
+      background: linear-gradient(135deg, #dcb1ff 0%, #ffe680 50%, #ffc0dd 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* Sparkles animation */
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    .sparkle {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      animation: sparkle 1s ease-out forwards;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 30px;
+      padding: 50px 40px;
+      box-shadow: 0 20px 60px rgba(91, 45, 214, 0.2);
+      border: 4px solid var(--purple-ultra-light);
+    }
+
+    .stage {
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    h1, h2 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--purple-dark);
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    h1 { font-size: 28px; }
+    h2 { font-size: 24px; }
+
+    p {
+      color: var(--purple-mid);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      font-weight: 500;
+    }
+
+    /* Egg Stage */
+    .egg-wrapper {
+      position: relative;
+      margin: 30px 0;
+    }
+
+    #eggImage {
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 10px 30px rgba(91, 45, 214, 0.3));
+      user-select: none;
+    }
+
+    #eggImage:hover {
+      transform: scale(1.05);
+    }
+
+    #eggImage:active {
+      transform: scale(0.95);
+    }
+
+    .click-prompt {
+      font-size: 18px;
+      color: var(--purple-dark);
+      font-weight: 700;
+      margin-top: 20px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .click-count {
+      display: inline-block;
+      background: var(--purple-ultra-light);
+      padding: 12px 25px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--purple-dark);
+      margin-top: 20px;
+      border: 3px solid var(--purple-light);
+    }
+
+    /* Hatching Stage */
+    .character-reveal {
+      width: 250px;
+      height: 250px;
+      font-size: 180px;
+      animation: hatchReveal 1s ease-out forwards;
+      filter: drop-shadow(0 10px 30px rgba(91, 45, 214, 0.3));
+    }
+
+    @keyframes hatchReveal {
+      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+      60% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .celebration {
+      font-size: 50px;
+      margin: 20px 0;
+      animation: bounce 0.6s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Name Stage */
+    .name-stage img {
+      width: 180px;
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 3px solid var(--purple-ultra-light);
+      border-radius: 12px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 18px;
+      color: var(--text-dark);
+      background: #fafafa;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--purple-mid);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(123, 85, 184, 0.1);
+    }
+
+    .error-message {
+      color: var(--pink);
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-mid) 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(91, 45, 214, 0.3);
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(91, 45, 214, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 40px 25px;
+      }
+
+      h1 { font-size: 22px; }
+      h2 { font-size: 20px; }
+
+      #eggImage {
+        width: 160px;
+        height: 160px;
+      }
+
+      .character-reveal {
+        width: 200px;
+        height: 200px;
+        font-size: 140px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <div class="card">
-
-      <!-- Stage 1: Egg clicking -->
+      <!-- Stage 1: Egg Clicking -->
       <div class="stage egg-stage" id="eggStage">
-        <h1>Your egg is ready!</h1>
-        <p>Click on the egg to help it hatch</p>
+        <h1>Your Egg is Ready!</h1>
+        <p>Click on the egg to help it hatch ✨</p>
         <div class="egg-wrapper">
           <img id="eggImage" src="/static/images/egg2.png" alt="Egg">
-          <p class="click-count" id="clickCount">Clicked: 0/5 times</p>
         </div>
+        <p class="click-prompt">👆 Click me!</p>
+        <div class="click-count" id="clickCount">0 / 5 clicks</div>
       </div>
 
-      <!-- Stage 2: Hatching animation -->
+      <!-- Stage 2: Hatching Animation -->
       <div class="stage hatching-stage hidden" id="hatchingStage">
-        <p>Congratulations! Your companion is born!</p>
-        <img
-          id="characterGif"
-          src="/static/images/character1.gif"
-          alt="Character"
-          class="character"
-        >
+        <div class="celebration">🎉</div>
+        <h2>It's Hatching!</h2>
+        <p>Your companion is being born...</p>
+        <div class="character-reveal" id="characterReveal">🐣</div>
+        <div class="celebration">✨</div>
       </div>
 
-      <!-- Stage 3: Name your pet -->
+      <!-- Stage 3: Name Your Pet -->
       <div class="stage name-stage hidden" id="nameStage">
-        <h2>Give your companion a name</h2>
-        <div id="nameError" style="color:#e05c7a; font-size:12px; margin-bottom:10px; display:none;"></div>
+        <h2>Meet Your New Friend!</h2>
+        <img src="/static/images/character1.gif" alt="Character">
+        <p>Give your companion a name to begin your journey together</p>
+        
         <form id="nameForm">
-          <label for="petName">Name</label>
-          <input
-            type="text"
-            id="petName"
-            placeholder="Example: Felix"
-            maxlength="20"
-            minlength="1"
-            required
-          >
-          <button type="submit" id="submitBtn">Start!</button>
+          <div class="form-group">
+            <label for="petName">Choose a Name</label>
+            <input 
+              type="text" 
+              id="petName" 
+              placeholder="e.g., Buddy"
+              minlength="1"
+              maxlength="20"
+              required
+            >
+          </div>
+          <div class="error-message" id="nameError"></div>
+          <button type="submit" class="submit-btn" id="submitBtn">
+            Start Journey!
+          </button>
         </form>
       </div>
-
     </div>
   </div>
 
   <script>
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
+    // === Helpers ===
     function getToken() {
-      return localStorage.getItem("access_token");
+      return localStorage.getItem('access_token');
     }
 
     function showStage(stageId) {
-      document.querySelectorAll(".stage").forEach(s => s.classList.add("hidden"));
-      document.getElementById(stageId).classList.remove("hidden");
+      document.querySelectorAll('.stage').forEach(s => s.classList.add('hidden'));
+      document.getElementById(stageId).classList.remove('hidden');
     }
 
-    // ── Egg clicking ─────────────────────────────────────────────────────────
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.textContent = ['✨', '⭐', '💫', '🌟'][Math.floor(Math.random() * 4)];
+      sparkle.style.left = x + 'px';
+      sparkle.style.top = y + 'px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 1000);
+    }
 
+    // === Egg Clicking ===
     const CLICKS_NEEDED = 5;
-    // If you add crack images, list them here in order:
-    // const crackImages = [
-    //   "/static/images/cosmetics/egg2_2.png",
-    //   "/static/images/cosmetics/egg2_3.png",
-    //   "/static/images/cosmetics/egg2_4.png",
-    //   "/static/images/cosmetics/egg2_5.png",
-    // ];
-
     let clickCount = 0;
 
-    const eggImage   = document.getElementById("eggImage");
-    const clickLabel = document.getElementById("clickCount");
+    const eggImage = document.getElementById('eggImage');
+    const clickLabel = document.getElementById('clickCount');
 
-    eggImage.addEventListener("click", function onClick() {
+    eggImage.addEventListener('click', function onClick(e) {
       clickCount++;
-      clickLabel.textContent = `Clicked: ${clickCount}/${CLICKS_NEEDED} times`;
+      clickLabel.textContent = `${clickCount} / ${CLICKS_NEEDED} clicks`;
 
-      // Swap crack image if available
-      // if (crackImages[clickCount - 1]) {
-      //   eggImage.src = crackImages[clickCount - 1];
-      // }
+      // Create sparkles at click position
+      createSparkle(e.clientX, e.clientY);
 
-      // Wiggle animation feedback
-      eggImage.style.transform = "scale(1.15) rotate(5deg)";
-      setTimeout(() => eggImage.style.transform = "", 150);
+      // Shake animation
+      eggImage.style.transform = `scale(1.1) rotate(${clickCount % 2 ? 10 : -10}deg)`;
+      setTimeout(() => {
+        eggImage.style.transform = '';
+      }, 200);
 
       if (clickCount >= CLICKS_NEEDED) {
-        eggImage.removeEventListener("click", onClick);
-        setTimeout(showHatchingStage, 200);
+        eggImage.removeEventListener('click', onClick);
+        setTimeout(showHatchingStage, 300);
       }
     });
 
-    // ── Hatching stage ───────────────────────────────────────────────────────
-
+    // === Hatching Stage ===
     function showHatchingStage() {
-      showStage("hatchingStage");
-      // After 2.5 seconds move on to the naming stage
-      setTimeout(() => showStage("nameStage"), 2500);
+      showStage('hatchingStage');
+      
+      // Create multiple sparkles
+      for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          createSparkle(x, y);
+        }, i * 200);
+      }
+
+      // Move to naming after 3 seconds
+      setTimeout(() => showStage('nameStage'), 3000);
     }
 
-    // ── Name form → API call ─────────────────────────────────────────────────
-
-    document.getElementById("nameForm").addEventListener("submit", async (e) => {
+    // === Name Form ===
+    document.getElementById('nameForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const petName   = document.getElementById("petName").value.trim();
-      const submitBtn = document.getElementById("submitBtn");
-      const errorDiv  = document.getElementById("nameError");
+      const petName = document.getElementById('petName').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const errorDiv = document.getElementById('nameError');
 
       if (!petName) return;
 
       const token = getToken();
       if (!token) {
-        // Not logged in — send them back to login
-        window.location.href = "/login";
+        window.location.href = '/login';
         return;
       }
 
-      // Disable button while request is in flight
-      submitBtn.disabled     = true;
-      submitBtn.textContent  = "Creating...";
-      errorDiv.style.display = "none";
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating...';
+      errorDiv.style.display = 'none';
 
       try {
-        const response = await fetch("/api/pet/create", {
-          method: "POST",
+        const response = await fetch('/api/pet/create', {
+          method: 'POST',
           headers: {
-            "Content-Type":  "application/json",
-            "Authorization": `Bearer ${token}`
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ name: petName, species: "egg" })
-
+          body: JSON.stringify({ name: petName, species: 'egg' })
         });
 
         if (!response.ok) {
           const data = await response.json();
 
-          // If the user already has a pet just send them home
-          if (response.status === 400 && data.detail === "User already has a pet") {
-            window.location.href = "/home";
+          // If user already has a pet, redirect to home
+          if (response.status === 400 && data.detail === 'User already has a pet') {
+            window.location.href = '/home';
             return;
           }
 
-          throw new Error(data.detail || "Failed to create pet");
+          throw new Error(data.detail || 'Failed to create pet');
         }
 
-        // Success — head to the home page
-        window.location.href = "/home";
+        // Success - redirect to home
+        window.location.href = '/home';
 
       } catch (err) {
-        errorDiv.textContent   = err.message;
-        errorDiv.style.display = "block";
-        submitBtn.disabled     = false;
-        submitBtn.textContent  = "Start!";
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Start Journey!';
       }
     });
   </script>

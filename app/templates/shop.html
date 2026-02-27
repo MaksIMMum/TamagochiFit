@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop - TamagochiFit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="/static/js/auth.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --bg: #eae6f0;
+      --surface: #f2f0f7;
+      --card: #e8e2f5;
+      --purple: #7b55b8;
+      --purple-dark: #5b2dd6;
+      --purple-light: #a070e0;
+      --text: #2a1a50;
+      --muted: #a898cc;
+      --accent: #ffd93d;
+      --cream: #fff8e1;
+      --pink: #e05c7a;
+      --success: #4caf50;
+    }
+
+    body { font-family:'Pixelify Sans',sans-serif; background:var(--bg); min-height:100vh; display:flex; flex-direction:column; }
+
+    /* ── Pixel Bar ── */
+    .pixel-bar {
+      height:8px; width:100%; display:block;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  10px,
+        var(--purple-light) 10px, var(--purple-light) 20px,
+        var(--accent)       20px, var(--accent)       28px,
+        var(--cream)        28px, var(--cream)        36px,
+        var(--pink)         36px, var(--pink)         44px,
+        var(--purple-light) 44px, var(--purple-light) 54px
+      );
+    }
+
+    /* ── Navbar ── */
+    .navbar { background:var(--surface); border-bottom:3px solid var(--card); padding:0 30px; box-shadow:0 2px 10px rgba(123,85,184,.08); position:sticky; top:0; z-index:100; }
+    .nav-content { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { font-family:'Press Start 2P',cursive; font-size:16px; color:var(--text); text-decoration:none; }
+    .nav-logo span { color:var(--purple); }
+    .nav-links { display:flex; gap:4px; list-style:none; }
+    .nav-links a { display:flex; align-items:center; gap:5px; padding:9px 14px; border-radius:12px; text-decoration:none; font-size:13px; font-weight:600; color:var(--muted); transition:all .2s; }
+    .nav-links a:hover  { background:var(--card); color:var(--text); }
+    .nav-links a.active { background:var(--purple); color:white; }
+    .nav-user { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--text); }
+    .nav-avatar { width:36px; height:36px; background:var(--purple); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; }
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; background:none; border:none; }
+    .hamburger span { display:block; width:24px; height:3px; background:var(--text); border-radius:2px; }
+    .mobile-menu { display:none; flex-direction:column; background:var(--surface); border-bottom:3px solid var(--card); padding:12px 20px 16px; gap:6px; position:sticky; top:64px; z-index:99; }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; text-decoration:none; font-size:15px; font-weight:700; color:var(--muted); }
+    .mobile-menu a:hover  { background:var(--card); color:var(--text); }
+    .mobile-menu a.active { background:var(--purple); color:white; }
+
+    /* ── Main ── */
+    .main-content { flex:1; max-width:1200px; width:100%; margin:0 auto; padding:30px 20px 40px; }
+
+    .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:16px; }
+    .page-title  { font-family:'Press Start 2P',cursive; font-size:28px; color:var(--text); }
+
+    /* Pixel bar under header */
+    .header-pixel-bar {
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 28px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--accent)       0px,  var(--accent)       12px,
+        var(--purple-light) 12px, var(--purple-light) 22px,
+        var(--pink)         22px, var(--pink)         30px,
+        var(--cream)        30px, var(--cream)        40px,
+        var(--purple-dark)  40px, var(--purple-dark)  50px
+      );
+    }
+
+    .coin-balance {
+      display:flex; align-items:center; gap:12px;
+      background:var(--accent); padding:14px 28px; border-radius:50px;
+      box-shadow:0 4px 15px rgba(255,217,61,.4);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .coin-icon   { font-size:26px; }
+    .coin-amount { font-size:22px; font-weight:700; color:var(--text); }
+
+    .shop-intro { background:var(--surface); border-radius:20px; padding:22px; margin-bottom:28px; border:3px solid var(--card); text-align:center; }
+    .shop-intro p { font-size:15px; color:var(--muted); font-weight:600; line-height:1.6; }
+
+    .shop-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:24px; }
+
+    /* ── Shop Item Card ── */
+    .shop-item {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 25px;
+      border: 3px solid var(--card);
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      transition: all .3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shop-item:hover { transform:translateY(-5px); box-shadow:0 8px 30px rgba(123,85,184,.2); border-color:var(--purple-light); }
+
+    /* Pixel-bar accent stripe under item header */
+    .shop-item::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      border-radius: 17px 17px 0 0;
+    }
+
+    .shop-item.effect-health::after    { background: linear-gradient(90deg, #e05c7a, #f06090, var(--accent)); }
+    .shop-item.effect-happiness::after { background: linear-gradient(90deg, var(--accent), #ffb347, var(--pink)); }
+    .shop-item.effect-energy::after    { background: linear-gradient(90deg, var(--purple), var(--purple-light), var(--accent)); }
+    .shop-item.effect-all::after       { background: linear-gradient(90deg, var(--success), var(--accent), var(--purple-light)); }
+
+    .shop-item::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(123,85,184,.03) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+    .item-content { position:relative; z-index:1; padding-top:10px; }
+
+    .item-icon { font-size:76px; margin-bottom:14px; text-align:center; animation:float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    .item-name { font-size:19px; font-weight:700; color:var(--text); margin-bottom:8px; text-align:center; }
+    .item-description { font-size:13px; color:var(--muted); margin-bottom:14px; text-align:center; line-height:1.5; min-height:52px; }
+
+    .item-effect { background:white; border-radius:10px; padding:12px; margin-bottom:14px; border:2px solid var(--card); }
+    .effect-label { font-size:11px; color:var(--muted); font-weight:600; margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
+    .effect-value { font-size:16px; font-weight:700; color:var(--success); }
+    .effect-value.health    { color:#e05c7a; }
+    .effect-value.happiness { color:#ff9800; }
+    .effect-value.energy    { color:var(--purple); }
+
+    .item-footer { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+    .item-price  { display:flex; align-items:center; gap:8px; font-size:20px; font-weight:700; color:var(--text); }
+
+    .buy-btn {
+      flex:1; padding:12px;
+      background:linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 100%);
+      color:white; border:none; border-radius:10px;
+      font-family:'Pixelify Sans',sans-serif; font-size:14px; font-weight:700;
+      cursor:pointer; transition:all .2s;
+    }
+    .buy-btn:hover    { transform:scale(1.05); }
+    .buy-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    /* ── Modal ── */
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); z-index:1000; align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-content { background:white; border-radius:25px; padding:40px; max-width:500px; width:90%; text-align:center; border:4px solid var(--purple); box-shadow:0 20px 60px rgba(91,45,214,.3); animation:modalAppear .3s ease-out; }
+    @keyframes modalAppear { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+    .modal-icon    { font-size:90px; margin-bottom:18px; }
+    .modal-title   { font-family:'Press Start 2P',cursive; font-size:20px; color:var(--text); margin-bottom:14px; line-height:1.4; }
+    .modal-message { font-size:16px; color:var(--muted); margin-bottom:28px; line-height:1.6; }
+    .modal-btn     { padding:15px 40px; background:var(--purple); color:white; border:none; border-radius:12px; font-family:'Pixelify Sans',sans-serif; font-size:16px; font-weight:700; cursor:pointer; transition:all .2s; }
+    .modal-btn:hover { background:var(--purple-dark); transform:scale(1.05); }
+
+    @media (max-width:768px) { .page-header{flex-direction:column;text-align:center;} .page-title{font-size:22px;} .shop-grid{grid-template-columns:1fr;} }
+    @media (max-width:640px) { .nav-links{display:none;} .hamburger{display:flex;} .main-content{padding-bottom:80px;} }
+  </style>
+</head>
+<body>
+
+  <div class="pixel-bar"></div>
+
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">🥚 Tamagoochi<span>Fit</span></a>
+      <ul class="nav-links">
+        <li><a href="/home">🏠 Home</a></li>
+        <li><a href="/workouts">💪 Workouts</a></li>
+        <li><a href="/meals">🍽️ Meals</a></li>
+        <li><a href="/shop" class="active">🛒 Shop</a></li>
+        <li><a href="/leaderboard">🏆 Leaderboard</a></li>
+        <li><a href="/profile">👤 Profile</a></li>
+      </ul>
+      <div class="nav-user">
+        <div class="nav-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+        <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/home">🏠 Home</a>
+    <a href="/workouts">💪 Workouts</a>
+    <a href="/meals">🍽️ Meals</a>
+    <a href="/shop" class="active">🛒 Shop</a>
+    <a href="/leaderboard">🏆 Leaderboard</a>
+    <a href="/profile">👤 Profile</a>
+  </div>
+
+  <div class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">🛒 Pet Shop</h1>
+      <div class="coin-balance">
+        <span class="coin-icon">💰</span>
+        <span class="coin-amount" id="coinBalance">0</span>
+      </div>
+    </div>
+
+    <div class="header-pixel-bar"></div>
+
+    <div class="shop-intro">
+      <p>
+        🎉 Feed your pet to boost its stats! Earn coins by completing workouts and logging healthy meals.
+        Each item has different effects on your pet's health, happiness, and energy.
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         shopItems: 4 HARDCODED PLACEHOLDERS
+         These are shown immediately before the API call returns.
+         The JS loadShopItems() will replace them with live data.
+    ═══════════════════════════════════════════ -->
+    <div class="shop-grid" id="shopItems">
+
+      <!-- Placeholder 1 – Health -->
+      <div class="shop-item effect-health">
+        <div class="item-content">
+          <div class="item-icon">🍎</div>
+          <h3 class="item-name">Apple</h3>
+          <p class="item-description">A crisp, fresh apple. Great for your pet's wellbeing and keeps the vet away!</p>
+          <div class="item-effect">
+            <div class="effect-label">Effect</div>
+            <div class="effect-value health">+15 Health</div>
+          </div>
+          <div class="item-footer">
+            <div class="item-price"><span>💰</span><span>20</span></div>
+            <button class="buy-btn" onclick="buyItem(1,'Apple',20)">Buy &amp; Feed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder 2 – Happiness -->
+      <div class="shop-item effect-happiness">
+        <div class="item-content">
+          <div class="item-icon">🎂</div>
+          <h3 class="item-name">Cake</h3>
+          <p class="item-description">A delicious slice of cake. Your pet will love it — but too much isn't ideal!</p>
+          <div class="item-effect">
+            <div class="effect-label">Effect</div>
+            <div class="effect-value happiness">+20 Happiness</div>
+          </div>
+          <div class="item-footer">
+            <div class="item-price"><span>💰</span><span>35</span></div>
+            <button class="buy-btn" onclick="buyItem(2,'Cake',35)">Buy &amp; Feed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder 3 – Energy -->
+      <div class="shop-item effect-energy">
+        <div class="item-content">
+          <div class="item-icon">⚡</div>
+          <h3 class="item-name">Energy Drink</h3>
+          <p class="item-description">A turbo boost for your pet. Perfect after a tough workout session!</p>
+          <div class="item-effect">
+            <div class="effect-label">Effect</div>
+            <div class="effect-value energy">+25 Energy</div>
+          </div>
+          <div class="item-footer">
+            <div class="item-price"><span>💰</span><span>50</span></div>
+            <button class="buy-btn" onclick="buyItem(3,'Energy Drink',50)">Buy &amp; Feed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder 4 – All stats -->
+      <div class="shop-item effect-all">
+        <div class="item-content">
+          <div class="item-icon">🥩</div>
+          <h3 class="item-name">Steak</h3>
+          <p class="item-description">A premium-grade steak. Boosts all stats and makes your pet feel like a champion!</p>
+          <div class="item-effect">
+            <div class="effect-label">Effect</div>
+            <div class="effect-value" style="color:var(--success)">+10 All Stats</div>
+          </div>
+          <div class="item-footer">
+            <div class="item-price"><span>💰</span><span>80</span></div>
+            <button class="buy-btn" onclick="buyItem(4,'Steak',80)">Buy &amp; Feed</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /shopItems -->
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      <div class="modal-icon">🎉</div>
+      <h2 class="modal-title" id="modalTitle">Success!</h2>
+      <p class="modal-message" id="modalMessage"></p>
+      <button class="modal-btn" onclick="closeModal()">Awesome!</button>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('access_token');
+    let userCoins = 0;
+
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+    const itemIcons = { 'Apple':'🍎','Fish':'🐟','Energy Drink':'⚡','Salad':'🥗','Cake':'🍰','Steak':'🥩' };
+    const effectClass = { 'health':'effect-health', 'happiness':'effect-happiness', 'energy':'effect-energy' };
+
+    async function loadCoins() {
+      try {
+        const r = await fetch('/api/food/coins', { headers:{ 'Authorization':`Bearer ${token}` } });
+        if (r.ok) { const d = await r.json(); userCoins = d.coins; document.getElementById('coinBalance').textContent = userCoins; }
+      } catch(e) {}
+    }
+
+    async function loadShopItems() {
+      try {
+        const r = await fetch('/api/food/shop', { headers:{ 'Authorization':`Bearer ${token}` } });
+        if (!r.ok) return; // silently keep placeholders if API fails
+        const items = await r.json();
+        if (!items.length) return;
+
+        const container = document.getElementById('shopItems');
+        container.innerHTML = items.map(item => {
+          const icon = itemIcons[item.name] || '🍽️';
+          const canAfford = userCoins >= item.price;
+          const ec = effectClass[item.effect_stat] || '';
+          return `
+            <div class="shop-item ${ec}">
+              <div class="item-content">
+                <div class="item-icon">${icon}</div>
+                <h3 class="item-name">${item.name}</h3>
+                <p class="item-description">${item.description || 'A tasty treat for your pet!'}</p>
+                <div class="item-effect">
+                  <div class="effect-label">Effect</div>
+                  <div class="effect-value ${item.effect_stat}">+${item.effect_value} ${item.effect_stat}</div>
+                </div>
+                <div class="item-footer">
+                  <div class="item-price"><span>💰</span><span>${item.price}</span></div>
+                  <button class="buy-btn" onclick="buyItem(${item.id},'${item.name}',${item.price})"
+                    ${!canAfford ? 'disabled' : ''}>
+                    ${canAfford ? 'Buy &amp; Feed' : 'Not Enough'}
+                  </button>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      } catch(e) { console.error(e); }
+    }
+
+    async function buyItem(itemId, itemName, price) {
+      if (userCoins < price) {
+        showModal('Not enough coins!', `You need ${price - userCoins} more coins to buy ${itemName}.`);
+        return;
+      }
+      try {
+        const r = await fetch('/api/food/shop/feed', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${token}` },
+          body: JSON.stringify({ item_id: itemId })
+        });
+        if (!r.ok) { const err = await r.json(); throw new Error(err.detail || 'Purchase failed'); }
+        const result = await r.json();
+        showModal('Fed your pet! 🎉', `${result.item_name}: ${result.effect_stat} +${result.effect_value}!\n\nCoins remaining: ${result.coins_remaining} 💰`);
+        await loadCoins();
+        await loadShopItems();
+      } catch(e) { showModal('Purchase failed', e.message); }
+    }
+
+    function showModal(title, message) {
+      document.getElementById('modalTitle').textContent   = title;
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('successModal').classList.add('show');
+    }
+    function closeModal() { document.getElementById('successModal').classList.remove('show'); }
+
+    document.getElementById('successModal').addEventListener('click', e => {
+      if (e.target.classList.contains('modal')) closeModal();
+    });
+
+    async function loadUserInfo() {
+      try {
+        const r = await fetch('/api/auth/me', { headers:{ 'Authorization':`Bearer ${token}` } });
+        if (r.ok) { const u = await r.json(); document.getElementById('userName').textContent = u.username; document.getElementById('userAvatar').textContent = u.username.charAt(0).toUpperCase(); }
+      } catch(e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadUserInfo();
+      loadCoins().then(loadShopItems);
+    });
+  </script>
+</body>
+</html>
