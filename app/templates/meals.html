@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meals - TamagochiFit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="/static/js/auth.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #eae6f0;
+      --surface: #f2f0f7;
+      --card: #e8e2f5;
+      --purple: #7b55b8;
+      --purple-dark: #5b2dd6;
+      --purple-light: #a070e0;
+      --text: #2a1a50;
+      --muted: #a898cc;
+      --accent: #ffd93d;
+      --cream: #fff8e1;
+      --pink: #e05c7a;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      /* Meal type palette */
+      --breakfast-color: #e89a3c;
+      --breakfast-bg:    #fff8ee;
+      --lunch-color:     #4db6e8;
+      --lunch-bg:        #eef7ff;
+      --dinner-color:    #7b55b8;
+      --dinner-bg:       #f0ecff;
+      --snack-color:     #e05c7a;
+      --snack-bg:        #fff0f3;
+    }
+
+    body {
+      font-family: 'Pixelify Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Pixel Bar ─────────────────────────── */
+    .pixel-bar {
+      height: 8px;
+      width: 100%;
+      display: block;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  10px,
+        var(--purple-light) 10px, var(--purple-light) 20px,
+        var(--accent)       20px, var(--accent)       28px,
+        var(--cream)        28px, var(--cream)        36px,
+        var(--pink)         36px, var(--pink)         44px,
+        var(--purple-light) 44px, var(--purple-light) 54px
+      );
+    }
+
+    /* ── Navbar ────────────────────────────── */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 3px solid var(--card);
+      padding: 0 30px;
+      box-shadow: 0 2px 10px rgba(123,85,184,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo { font-family: 'Press Start 2P', cursive; font-size: 16px; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--purple); }
+
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a {
+      display: flex; align-items: center; gap: 5px;
+      padding: 9px 14px; border-radius: 12px; text-decoration: none;
+      font-size: 13px; font-weight: 600; color: var(--muted); transition: all 0.2s;
+    }
+    .nav-links a:hover  { background: var(--card); color: var(--text); }
+    .nav-links a.active { background: var(--purple); color: white; }
+
+    .nav-user { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--text); }
+    .nav-avatar { width:36px; height:36px; background:var(--purple); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; }
+
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; background:none; border:none; }
+    .hamburger span { display:block; width:24px; height:3px; background:var(--text); border-radius:2px; transition:all 0.2s; }
+
+    .mobile-menu { display:none; flex-direction:column; background:var(--surface); border-bottom:3px solid var(--card); padding:12px 20px 16px; gap:6px; position:sticky; top:64px; z-index:99; box-shadow:0 4px 12px rgba(123,85,184,.10); }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; text-decoration:none; font-size:15px; font-weight:700; color:var(--muted); transition:all 0.15s; }
+    .mobile-menu a:hover  { background:var(--card); color:var(--text); }
+    .mobile-menu a.active { background:var(--purple); color:white; }
+
+    /* ── Main ──────────────────────────────── */
+    .main-content { flex:1; max-width:1200px; width:100%; margin:0 auto; padding:30px 20px 40px; }
+
+    .page-header { margin-bottom:30px; }
+    .page-title  { font-family:'Press Start 2P',cursive; font-size:28px; color:var(--text); margin-bottom:10px; }
+    .page-subtitle { font-size:16px; color:var(--muted); font-weight:600; }
+
+    /* Pixel bar under page header */
+    .header-pixel-bar {
+      height: 6px;
+      margin: 16px 0 0;
+      border-radius: 3px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--breakfast-color) 0px, var(--breakfast-color) 12px,
+        var(--lunch-color)     12px, var(--lunch-color)    22px,
+        var(--dinner-color)    22px, var(--dinner-color)   32px,
+        var(--snack-color)     32px, var(--snack-color)    40px,
+        var(--accent)          40px, var(--accent)         50px
+      );
+    }
+
+    .content-grid { display:grid; grid-template-columns:500px 1fr; gap:30px; }
+
+    /* ── Log Card ──────────────────────────── */
+    .log-card {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(123,85,184,0.1);
+      border: 3px solid var(--card);
+      height: fit-content;
+    }
+
+    .card-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:22px; display:flex; align-items:center; gap:10px; }
+    .card-icon  { font-size:26px; }
+
+    .info-box { background:white; border-radius:12px; padding:18px; margin-bottom:22px; border:2px solid var(--card); }
+    .info-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; }
+    .quality-grid { display:grid; gap:10px; }
+    .quality-item { display:flex; align-items:center; gap:10px; font-size:13px; }
+    .quality-badge { padding:4px 10px; border-radius:8px; font-weight:700; font-size:12px; }
+    .quality-badge.healthy { background:#d1f4e0; color:#0d5c2c; }
+    .quality-badge.okay    { background:#fff4e0; color:#8b5a00; }
+    .quality-badge.junk    { background:#ffe0e6; color:#c41e3a; }
+
+    /* ── Meal Type Cards ───────────────────── */
+    .meal-type-label {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meal-type-label::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--card);
+      border-radius: 2px;
+    }
+
+    .meal-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    /* Hidden radio */
+    .meal-type-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .meal-type-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 12px;
+      background: white;
+      border: 3px solid var(--card);
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .meal-type-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .meal-type-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(123,85,184,0.15); }
+
+    /* Selected state per type */
+    .meal-type-option input:checked + .meal-type-card[data-type="breakfast"] {
+      border-color: var(--breakfast-color);
+      background: var(--breakfast-bg);
+      box-shadow: 0 0 0 2px var(--breakfast-color);
+    }
+    .meal-type-option input:checked + .meal-type-card[data-type="lunch"] {
+      border-color: var(--lunch-color);
+      background: var(--lunch-bg);
+      box-shadow: 0 0 0 2px var(--lunch-color);
+    }
+    .meal-type-option input:checked + .meal-type-card[data-type="dinner"] {
+      border-color: var(--dinner-color);
+      background: var(--dinner-bg);
+      box-shadow: 0 0 0 2px var(--dinner-color);
+    }
+    .meal-type-option input:checked + .meal-type-card[data-type="snack"] {
+      border-color: var(--snack-color);
+      background: var(--snack-bg);
+      box-shadow: 0 0 0 2px var(--snack-color);
+    }
+
+    .mt-icon { font-size: 38px; margin-bottom: 8px; }
+    .mt-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .mt-desc { font-size: 11px; font-weight: 600; color: var(--muted); }
+
+    .mt-checkmark {
+      position: absolute;
+      top: 8px; right: 10px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--success);
+      color: white;
+      font-size: 11px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .meal-type-option input:checked + .meal-type-card .mt-checkmark {
+      display: flex;
+    }
+
+    /* Hidden radio value tracker for JS */
+    #selectedMealType { display: none; }
+
+    /* ── Form ──────────────────────────────── */
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display:block; margin-bottom:8px; color:var(--text); font-weight:600; font-size:14px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 3px solid var(--card);
+      border-radius: 12px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: white;
+      transition: all 0.2s ease;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(123,85,184,0.1);
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(91,45,214,0.3);
+    }
+    .submit-btn:hover  { transform:translateY(-2px); box-shadow:0 6px 20px rgba(91,45,214,0.4); }
+    .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+    .alert { padding:15px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; display:none; }
+    .alert-success { background:#d1f4e0; color:#0d5c2c; border:2px solid #0d5c2c; }
+    .alert-danger  { background:#ffe0e6; color:#c41e3a; border:2px solid #c41e3a; }
+
+    /* ── History Section ───────────────────── */
+    .history-section {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(123,85,184,0.1);
+      border: 3px solid var(--card);
+    }
+
+    .meal-list { display:flex; flex-direction:column; gap:15px; }
+
+    .meal-item {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      border: 3px solid var(--card);
+      transition: all 0.2s ease;
+    }
+    .meal-item:hover { border-color:var(--purple-light); transform:translateX(4px); }
+
+    .meal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+    .meal-type-text { font-size:18px; font-weight:700; color:var(--text); text-transform:capitalize; }
+    .meal-time { font-size:13px; color:var(--muted); font-weight:600; }
+    .meal-quality { display:inline-block; padding:6px 14px; border-radius:10px; font-size:13px; font-weight:700; }
+    .meal-quality.healthy { background:#d1f4e0; color:#0d5c2c; }
+    .meal-quality.okay    { background:#fff4e0; color:#8b5a00; }
+    .meal-quality.junk    { background:#ffe0e6; color:#c41e3a; }
+    .meal-notes  { font-size:14px; color:var(--muted); margin-top:10px; line-height:1.5; }
+    .meal-effect { margin-top:10px; font-size:13px; color:var(--purple); font-weight:600; }
+
+    /* ── Responsive ────────────────────────── */
+    @media (max-width: 1024px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links  { display:none; }
+      .hamburger  { display:flex; }
+      .meal-type-grid { grid-template-columns: repeat(2, 1fr); }
+      .main-content { padding-bottom:80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pixel-bar"></div>
+
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">🥚 Tamagoochi<span>Fit</span></a>
+      <ul class="nav-links">
+        <li><a href="/home">🏠 Home</a></li>
+        <li><a href="/workouts">💪 Workouts</a></li>
+        <li><a href="/meals" class="active">🍽️ Meals</a></li>
+        <li><a href="/shop">🛒 Shop</a></li>
+        <li><a href="/leaderboard">🏆 Leaderboard</a></li>
+        <li><a href="/profile">👤 Profile</a></li>
+      </ul>
+      <div class="nav-user">
+        <div class="nav-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+        <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/home">🏠 Home</a>
+    <a href="/workouts">💪 Workouts</a>
+    <a href="/meals" class="active">🍽️ Meals</a>
+    <a href="/shop">🛒 Shop</a>
+    <a href="/leaderboard">🏆 Leaderboard</a>
+    <a href="/profile">👤 Profile</a>
+  </div>
+
+  <div class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">🍽️ Meals</h1>
+      <p class="page-subtitle">Track your nutrition and help your pet stay healthy!</p>
+      <div class="header-pixel-bar"></div>
+    </div>
+
+    <div class="content-grid">
+      <!-- Log Meal Form -->
+      <div class="log-card">
+        <h2 class="card-title">
+          <span class="card-icon">📝</span>
+          Log a Meal
+        </h2>
+
+        <div class="info-box">
+          <div class="info-title">How Meals Affect Your Pet:</div>
+          <div class="quality-grid">
+            <div class="quality-item">
+              <span class="quality-badge healthy">Healthy</span>
+              <span>+8 Health, +3 Happiness</span>
+            </div>
+            <div class="quality-item">
+              <span class="quality-badge okay">Okay</span>
+              <span>+2 Health, +1 Happiness</span>
+            </div>
+            <div class="quality-item">
+              <span class="quality-badge junk">Junk</span>
+              <span>-5 Health, +5 Happiness</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="message-container"></div>
+
+        <form id="mealForm">
+          <!-- ── MEAL TYPE CARDS ── -->
+          <div class="meal-type-label">Meal Type *</div>
+          <div class="meal-type-grid">
+
+            <label class="meal-type-option">
+              <input type="radio" name="meal_type" value="breakfast" required>
+              <div class="meal-type-card" data-type="breakfast">
+                <div class="mt-checkmark">✓</div>
+                <div class="mt-icon">🌅</div>
+                <div class="mt-name">Breakfast</div>
+                <div class="mt-desc">Morning fuel</div>
+              </div>
+            </label>
+
+            <label class="meal-type-option">
+              <input type="radio" name="meal_type" value="lunch">
+              <div class="meal-type-card" data-type="lunch">
+                <div class="mt-checkmark">✓</div>
+                <div class="mt-icon">☀️</div>
+                <div class="mt-name">Lunch</div>
+                <div class="mt-desc">Midday boost</div>
+              </div>
+            </label>
+
+            <label class="meal-type-option">
+              <input type="radio" name="meal_type" value="dinner">
+              <div class="meal-type-card" data-type="dinner">
+                <div class="mt-checkmark">✓</div>
+                <div class="mt-icon">🌙</div>
+                <div class="mt-name">Dinner</div>
+                <div class="mt-desc">Evening recovery</div>
+              </div>
+            </label>
+
+            <label class="meal-type-option">
+              <input type="radio" name="meal_type" value="snack">
+              <div class="meal-type-card" data-type="snack">
+                <div class="mt-checkmark">✓</div>
+                <div class="mt-icon">🍪</div>
+                <div class="mt-name">Snack</div>
+                <div class="mt-desc">Quick bite</div>
+              </div>
+            </label>
+
+          </div>
+          <!-- End meal type cards -->
+
+          <div class="form-group">
+            <label for="quality">Quality *</label>
+            <select id="quality" name="quality" required>
+              <option value="">Select quality...</option>
+              <option value="healthy">😊 Healthy</option>
+              <option value="okay">😐 Okay</option>
+              <option value="junk">😋 Junk Food</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">What did you eat?</label>
+            <textarea id="notes" name="notes" placeholder="Describe your meal..."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            Log Meal
+          </button>
+        </form>
+      </div>
+
+      <!-- Meal History -->
+      <div class="history-section">
+        <h2 class="card-title">
+          <span class="card-icon">📊</span>
+          Recent Meals
+        </h2>
+        <div class="meal-list" id="mealHistory">
+          <p style="text-align:center;color:var(--muted);padding:40px 20px;">
+            No meals logged yet. Start tracking your nutrition!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('access_token');
+
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+    document.getElementById('mealForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      const msgEl = document.getElementById('message-container');
+      const mealType = document.querySelector('input[name="meal_type"]:checked')?.value;
+      const quality  = document.getElementById('quality').value;
+      const notes    = document.getElementById('notes').value;
+      if (!mealType || !quality) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Logging...';
+      msgEl.innerHTML = '';
+
+      try {
+        const response = await fetch('/api/food/meal', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+          body: JSON.stringify({ meal_type: mealType, quality, notes: notes || null })
+        });
+        if (!response.ok) { const err = await response.json(); throw new Error(err.detail || 'Failed'); }
+        const result = await response.json();
+        msgEl.innerHTML = `<div class="alert alert-success" style="display:block;">✓ Meal logged! ${result.pet_effect}</div>`;
+        document.getElementById('mealForm').reset();
+        loadMealHistory();
+        setTimeout(() => { msgEl.innerHTML = ''; }, 5000);
+      } catch(err) {
+        msgEl.innerHTML = `<div class="alert alert-danger" style="display:block;">✗ ${err.message}</div>`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log Meal';
+      }
+    });
+
+    async function loadMealHistory() {
+      try {
+        const response = await fetch('/api/food/meal/history?limit=20', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed');
+        const meals = await response.json();
+        const container = document.getElementById('mealHistory');
+        if (!meals.length) {
+          container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">No meals logged yet.</p>';
+          return;
+        }
+        container.innerHTML = meals.map(meal => {
+          const d = new Date(meal.logged_at);
+          const fmt = d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+          return `
+            <div class="meal-item">
+              <div class="meal-header">
+                <div>
+                  <div class="meal-type-text">${getMealIcon(meal.meal_type)} ${meal.meal_type}</div>
+                  <div class="meal-time">${fmt} • ${getTimeAgo(d)}</div>
+                </div>
+                <div class="meal-quality ${meal.quality}">${meal.quality}</div>
+              </div>
+              ${meal.notes  ? `<div class="meal-notes">${meal.notes}</div>` : ''}
+              ${meal.pet_effect ? `<div class="meal-effect">🐾 ${meal.pet_effect}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+      } catch(e) { console.error(e); }
+    }
+
+    function getMealIcon(t) { return {breakfast:'🌅',lunch:'☀️',dinner:'🌙',snack:'🍪'}[t] || '🍽️'; }
+    function getTimeAgo(d) {
+      const s = Math.floor((new Date() - d) / 1000);
+      if (s < 60)    return 'just now';
+      if (s < 3600)  return `${Math.floor(s/60)}m ago`;
+      if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+      return `${Math.floor(s/86400)}d ago`;
+    }
+
+    async function loadUserInfo() {
+      try {
+        const r = await fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } });
+        if (r.ok) {
+          const u = await r.json();
+          document.getElementById('userName').textContent   = u.username;
+          document.getElementById('userAvatar').textContent = u.username.charAt(0).toUpperCase();
+        }
+      } catch(e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => { loadUserInfo(); loadMealHistory(); });
+  </script>
+</body>
+</html>
