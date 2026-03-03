@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, cast, Date
+from sqlalchemy import func
 from datetime import datetime, timezone, timedelta
 
 from app.models.workout import WorkoutLog
+from app.models.user import User
 from app.schemas.workout import WorkoutLogCreate
-from app.services import pet_service
+from app.services import pet_service, food_service
 
 
 
@@ -46,12 +47,25 @@ def log_workout(db: Session, user_id: int, workout_data: WorkoutLogCreate) -> tu
     db.refresh(log)
 
     xp_awarded = _calculate_xp(workout_data)
+
+    print(f" DEBUG: XP to award: {xp_awarded}")
+
     try:
+        # Award XP to pet
         pet_service.award_xp(db, user_id, xp_awarded)
+        print(f" DEBUG: XP awarded successfully")
+
+        # Award coins based on XP earned
         coins_earned = max(1, int(xp_awarded / 10))
+        print(f"DEBUG: Coins to award: {coins_earned}")
+
         user = db.query(User).filter(User.id == user_id).first()
         if user:
+            print(f"🔍 DEBUG: User found, current coins: {user.coins}")
             food_service.award_coins(db, user, coins_earned)
+            print(f"✅ DEBUG: Coins awarded, new total: {user.coins}")
+        else:
+            print(f" DEBUG: User not found!")
 
         pet_service.update_pet_stats(
             db, user_id,
@@ -59,7 +73,12 @@ def log_workout(db: Session, user_id: int, workout_data: WorkoutLogCreate) -> tu
             energy_delta=-5.0,
             health_delta=+5.0,
         )
-    except Exception:
+        print(f" DEBUG: Pet stats updated")
+
+    except Exception as e:
+        print(f" DEBUG ERROR: {e}")
+        import traceback
+        traceback.print_exc()
         pass
 
     return log, xp_awarded
@@ -89,41 +108,56 @@ def get_streak(db: Session, user_id: int) -> dict:
     Calculate the user's current and longest workout streaks.
     A streak is a consecutive sequence of calendar days with at least one log.
     """
-    # Get all distinct workout dates for the user, newest first
-    rows = (
-        db.query(cast(WorkoutLog.logged_at, Date).label("day"))
-        .filter(WorkoutLog.user_id == user_id)
-        .group_by(cast(WorkoutLog.logged_at, Date))
-        .order_by(cast(WorkoutLog.logged_at, Date).desc())
-        .all()
-    )
+    try:
 
-    if not rows:
+        rows = (
+            db.query(func.date(WorkoutLog.logged_at).label("day"))
+            .filter(WorkoutLog.user_id == user_id)
+            .group_by(func.date(WorkoutLog.logged_at))
+            .order_by(func.date(WorkoutLog.logged_at).desc())
+            .all()
+        )
+
+        if not rows:
+            return {"current_streak": 0, "longest_streak": 0}
+
+        dates = []
+        for row in rows:
+            if isinstance(row.day, str):
+                date_obj = datetime.strptime(row.day, '%Y-%m-%d').date()
+            else:
+                date_obj = row.day
+            dates.append(date_obj)
+
+        today = datetime.now(timezone.utc).date()
+
+        current_streak = 0
+        check = today
+        for date in dates:
+            if date == check or date == check - timedelta(days=1):
+                current_streak += 1
+                check = date - timedelta(days=1)
+            else:
+                break
+
+        longest_streak = 1
+        running = 1
+        for i in range(1, len(dates)):
+            diff = (dates[i - 1] - dates[i]).days
+            if diff == 1:
+                running += 1
+                longest_streak = max(longest_streak, running)
+            else:
+                running = 1
+
+        return {
+            "current_streak": current_streak,
+            "longest_streak": longest_streak
+        }
+
+    except Exception as e:
+        # If streak calculation fails, return 0 instead of crashing
+        print(f" Error calculating streak: {e}")
+        import traceback
+        traceback.print_exc()
         return {"current_streak": 0, "longest_streak": 0}
-
-    dates = [row.day for row in rows]
-    today = datetime.now(timezone.utc).date()
-
-    # Current streak — count consecutive days backwards from today (or yesterday)
-    current_streak = 0
-    check = today
-    for date in dates:
-        if date == check or date == check - timedelta(days=1):
-            current_streak += 1
-            check = date - timedelta(days=1)  # expect next date to be one day earlier
-        else:
-            break
-
-    longest_streak = 1
-    running = 1
-    for i in range(1, len(dates)):
-        if (dates[i - 1] - dates[i]).days == 1:
-            running += 1
-            longest_streak = max(longest_streak, running)
-        else:
-            running = 1
-
-    return {
-        "current_streak": current_streak,
-        "longest_streak": longest_streak
-    }

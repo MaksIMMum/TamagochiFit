@@ -293,7 +293,7 @@
       <!-- Stage 3: Name Your Pet -->
       <div class="stage name-stage hidden" id="nameStage">
         <h2>Meet Your New Friend!</h2>
-        <img src="/static/images/character1.gif" alt="Character">
+        <img src="" alt="Character">
         <p>Give your companion a name to begin your journey together</p>
 
         <form id="nameForm">
@@ -364,10 +364,9 @@
       }
     });
 
-
     // === Pet Type Selection ===
     let selectedPetType = null;
-    let petTypesData = [];
+    let petTypesData = {};
 
     async function loadPetTypes() {
       try {
@@ -382,13 +381,27 @@
     }
 
     function getRandomPetType() {
-      if (petTypesData.length === 0) return 'blue';
-      return petTypesData[Math.floor(Math.random() * petTypesData.length)].id;
+      // Extract the keys from the dictionary (e.g., ['blue', 'cherry', 'cyan', ...])
+      const types = Object.keys(petTypesData);
+
+      // Fallback in case the fetch hasn't completed yet
+      if (types.length === 0) return 'blue';
+
+      // Pick and return a random key
+      const rand = types[Math.floor(Math.random() * types.length)];
+      return rand;
     }
 
     function getPetTypeImage(petTypeId) {
-      const petType = petTypesData.find(p => p.id === petTypeId);
-      return petType ? petType.preview_image : '/static/images/characters/blue egg.png';
+      // Safely verify the pet type exists in our fetched data
+      if (!petTypesData || !petTypesData[petTypeId]) {
+        console.warn(`Pet type ${petTypeId} not found, falling back to blue egg.`);
+        return '/static/images/characters/blue egg.png';
+      }
+
+      // Navigate the dictionary: petTypesData -> "blue" -> "evolution_chain" -> "2" -> "image"
+      // We use stage "2" (newborn) because this is the post-hatch reveal stage
+      return petTypesData[petTypeId].evolution_chain["2"].image;
     }
 
     // === Hatching Stage ===
@@ -397,6 +410,7 @@
 
       selectedPetType = getRandomPetType();
       const petImage = getPetTypeImage(selectedPetType);
+
       document.getElementById('characterReveal').src = petImage;
       console.log('Selected pet type:', selectedPetType, 'Image:', petImage);
 
@@ -410,7 +424,6 @@
 
       setTimeout(() => showStage('nameStage'), 3000);
     }
-
     // === Name Form ===
     document.getElementById('nameForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -440,10 +453,10 @@
           },
           body: JSON.stringify({
             name: petName,
-            pet_type: selectedPetType || 'blue'
+            pet_type: selectedPetType.toString() || 'blue'
           })
         });
-
+        console.log(selectedPetType.toString() || 'blue' )
         if (!response.ok) {
           const data = await response.json();
 

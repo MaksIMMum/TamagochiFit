@@ -779,10 +779,8 @@
         const response = await fetch('/api/pet-types/');
         if (response.ok) {
           const types = await response.json();
-          petTypesMap = {};
-          types.forEach(t => {
-            petTypesMap[t.id] = t;
-          });
+          petTypesMap = types
+
           console.log('Pet types loaded:', petTypesMap);
         }
       } catch (e) {
@@ -805,6 +803,7 @@
         document.getElementById('petLevel').textContent = `Level ${pet.level}`;
 
         const petTypeId = pet.pet_type || 'blue';
+
         let petImageUrl = '/static/images/characters/blue egg.png';
 
         if (petTypesMap[petTypeId]) {
@@ -823,9 +822,19 @@
         }
 
         document.getElementById('petSpecies').textContent = pet.species.replace(/_/g, ' ').toUpperCase();
-        document.getElementById('healthValue').textContent = Math.round(pet.health);
-        document.getElementById('happinessValue').textContent = Math.round(pet.happiness);
-        document.getElementById('energyValue').textContent = Math.round(pet.energy);
+
+        updateStat('health', pet.health);
+        updateStat('happiness', pet.happiness);
+        updateStat('energy', pet.energy);
+
+        const neededXP = pet.level * 100;
+        const currentXP = Math.round(pet.xp);
+
+        const xpPercent = Math.min(100, Math.max(0, (currentXP / neededXP) * 100));
+
+        document.getElementById('currentXP').textContent = currentXP;
+        document.getElementById('neededXP').textContent = neededXP;
+        document.getElementById('xpBar').style.width = `${xpPercent}%`;
 
       } catch(e) {
         console.error('Failed to load pet:', e);

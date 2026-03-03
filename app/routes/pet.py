@@ -5,6 +5,7 @@ from app.models import User
 from app.models.pet import Pet
 from app.schemas.pet import PetCreate, PetResponse
 from app.utils.dependencies import get_current_user
+from app.services import pet_service
 
 router = APIRouter(
     prefix="/api/pet",
@@ -30,19 +31,8 @@ async def create_pet(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User already has a pet"
         )
+    return pet_service.create_pet(db, user_id=current_user.id, pet_data=pet_data)
 
-    # Create new pet
-    new_pet = Pet(
-        user_id=current_user.id,
-        name=pet_data.name,
-        species=pet_data.species or "egg"
-    )
-
-    db.add(new_pet)
-    db.commit()
-    db.refresh(new_pet)
-
-    return new_pet
 @router.get("/me", response_model=PetResponse)
 async def get_my_pet(
     current_user: User = Depends(get_current_user),

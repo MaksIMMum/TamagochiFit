@@ -55,3 +55,16 @@ class StreakResponse(BaseModel):
     """Current workout streak for the user."""
     current_streak: int   # consecutive days with at least one workout
     longest_streak: int
+class SplitFinishRequest(BaseModel):
+    """Payload sent from the frontend when a split is finished."""
+    duration_mins: float
+    coins_earned: int
+    xp_earned: float
+    split_name: str = "Workout Split"
+
+class SplitFinishResponse(BaseModel):
+    """Response returned after processing a finished split."""
+    message: str
+    new_coins_total: int
+    new_xp_total: float
+    pet_level: int
