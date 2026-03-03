@@ -255,15 +255,20 @@
     @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     .pet-sprite {
+      width: 250px;
+      height: 250px;
+      object-fit: contain;
       font-size: 160px;
-      animation: float 3s ease-in-out infinite;
+      animation: float 4s ease-in-out infinite;
       position: relative; z-index: 1;
+      filter: drop-shadow(0 10px 30px rgba(123, 85, 184, 0.2));
+      margin-bottom: 15px;
     }
 
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
     .pet-species {
-      font-size: 16px;
+      font-size: 18px;
       color: var(--muted);
       font-weight: 600;
       margin-top: 15px;
@@ -335,6 +340,214 @@
 
     .activity-title { font-size: 18px; font-weight: 700; color: var(--text); }
 
+    .feed-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .feed-modal.show {
+      display: flex;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+    }
+
+    .modal-card {
+      position: relative;
+      z-index: 1001;
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(123, 85, 184, 0.3);
+      border: 4px solid var(--purple);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid var(--card);
+    }
+
+    .modal-header h2 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 20px;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--purple);
+      transform: scale(1.2);
+    }
+
+    .coin-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      padding: 12px 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: var(--text);
+      width: fit-content;
+    }
+
+    .coin-icon {
+      font-size: 20px;
+    }
+
+    .shop-items-feed {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .feed-item {
+      background: var(--surface);
+      border: 3px solid var(--card);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .feed-item:hover {
+      transform: translateY(-3px);
+      border-color: var(--purple-light);
+      box-shadow: 0 6px 20px rgba(123, 85, 184, 0.15);
+    }
+
+    .feed-item-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .feed-item-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .feed-item-effect {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      min-height: 20px;
+    }
+
+    .feed-item-price {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .feed-buy-btn {
+      width: 100%;
+      padding: 8px;
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .feed-buy-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+
+    .feed-buy-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .feed-message {
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 600;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .feed-message.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+
+    .feed-message.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+
+    @media (max-width: 480px) {
+      .modal-card {
+        max-height: 90vh;
+        padding: 20px;
+      }
+
+      .modal-header h2 {
+        font-size: 16px;
+      }
+
+      .shop-items-feed {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     .quick-action {
       display: block;
       width: 100%;
@@ -355,6 +568,7 @@
 
     .quick-action:hover { background: var(--purple-dark); transform: translateY(-2px); }
     .quick-action:last-child { margin-bottom: 0; }
+
 
     .stats-summary {
       display: grid;
@@ -439,7 +653,7 @@
       </div>
 
       <div class="pet-display">
-        <div class="pet-sprite" id="petSprite">🥚</div>
+        <img id="petImage" src="" alt="Pet" class="pet-sprite">
         <p class="pet-species" id="petSpecies">Egg</p>
       </div>
 
@@ -482,6 +696,7 @@
           <span class="activity-icon">🎯</span>
           <h2 class="activity-title">Quick Actions</h2>
         </div>
+
         <a href="/workouts" class="quick-action">💪 Log Workout</a>
         <button class="quick-action" onclick="showFeedModal()">🍎 Feed Pet</button>
         <button class="quick-action" onclick="showMealModal()">🍽️ Log Meal</button>
@@ -534,35 +749,87 @@
       </div>
     </div>
   </div>
+  <div class="feed-modal" id="feedModal">
+      <div class="modal-overlay" onclick="closeFeedModal()"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>🍎 Feed Your Pet</h2>
+          <button class="modal-close" onclick="closeFeedModal()">✕</button>
+        </div>
 
+        <div class="coin-display">
+          <span class="coin-icon">💰</span>
+          <span id="feedModalCoins">0</span> coins
+        </div>
+
+        <div class="shop-items-feed" id="feedShopItems">
+          <!-- Items will be loaded here by JavaScript -->
+          <p style="text-align: center; color: var(--muted);">Loading shop items...</p>
+        </div>
+
+        <div id="feedModalMessage" class="feed-message"></div>
+      </div>
+    </div>
   <script>
-    const speciesEmoji = {
-      egg:'🥚', cracked_egg:'🥚', chick:'🐣',
-      kitten:'🐱', cat:'😺', cool_cat:'😎'
-    };
+        // Store pet types data globally
+    let petTypesMap = {};
 
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('open');
+    async function loadPetTypes() {
+      try {
+        const response = await fetch('/api/pet-types/');
+        if (response.ok) {
+          const types = await response.json();
+          petTypesMap = {};
+          types.forEach(t => {
+            petTypesMap[t.id] = t;
+          });
+          console.log('Pet types loaded:', petTypesMap);
+        }
+      } catch (e) {
+        console.error('Failed to load pet types:', e);
+      }
     }
 
     async function loadPetData() {
       const token = localStorage.getItem('access_token');
       try {
-        const response = await fetch('/api/pet/me', { headers: { 'Authorization': `Bearer ${token}` } });
+        const response = await fetch('/api/pet/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (!response.ok) throw new Error('Failed to load pet');
+
         const pet = await response.json();
+        console.log('Pet data:', pet);
+
         document.getElementById('petName').textContent = pet.name;
         document.getElementById('petLevel').textContent = `Level ${pet.level}`;
-        document.getElementById('petSprite').textContent = speciesEmoji[pet.species] || '🥚';
-        document.getElementById('petSpecies').textContent = pet.species.replace('_',' ').toUpperCase();
-        updateStat('health', pet.health);
-        updateStat('happiness', pet.happiness);
-        updateStat('energy', pet.energy);
-        const xpForNext = pet.level * 100;
-        document.getElementById('currentXP').textContent = Math.floor(pet.xp);
-        document.getElementById('neededXP').textContent = xpForNext;
-        document.getElementById('xpBar').style.width = `${(pet.xp/xpForNext)*100}%`;
-      } catch(e) { console.error(e); }
+
+        const petTypeId = pet.pet_type || 'blue';
+        let petImageUrl = '/static/images/characters/blue egg.png';
+
+        if (petTypesMap[petTypeId]) {
+          const evolutionChain = petTypesMap[petTypeId].evolution_chain;
+          for (const [levelThreshold, data] of Object.entries(evolutionChain)) {
+            if (pet.level >= parseInt(levelThreshold)) {
+              petImageUrl = data.image;
+            }
+          }
+        }
+
+        const petImageEl = document.getElementById('petImage');
+        if (petImageEl) {
+          petImageEl.src = petImageUrl;
+          petImageEl.alt = pet.species;
+        }
+
+        document.getElementById('petSpecies').textContent = pet.species.replace(/_/g, ' ').toUpperCase();
+        document.getElementById('healthValue').textContent = Math.round(pet.health);
+        document.getElementById('happinessValue').textContent = Math.round(pet.happiness);
+        document.getElementById('energyValue').textContent = Math.round(pet.energy);
+
+      } catch(e) {
+        console.error('Failed to load pet:', e);
+      }
     }
 
     function updateStat(stat, value) {
@@ -589,14 +856,133 @@
       } catch(e) { console.error(e); }
     }
 
+    // ── Feed Modal Functions ──
+    async function showFeedModal() {
+      document.getElementById('feedModal').classList.add('show');
+      await loadFeedShopItems();
+    }
+
+    function closeFeedModal() {
+      document.getElementById('feedModal').classList.remove('show');
+      document.getElementById('feedModalMessage').className = 'feed-message';
+      document.getElementById('feedModalMessage').textContent = '';
+    }
+
+    async function loadFeedShopItems() {
+      try {
+        const token = localStorage.getItem('access_token');
+
+        const coinsRes = await fetch('/api/food/coins', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (coinsRes.ok) {
+          const { coins } = await coinsRes.json();
+          document.getElementById('feedModalCoins').textContent = coins;
+        }
+
+        const itemsRes = await fetch('/api/food/shop', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!itemsRes.ok) throw new Error('Failed to load shop items');
+
+        const items = await itemsRes.json();
+        const container = document.getElementById('feedShopItems');
+
+        if (!items.length) {
+          container.innerHTML = '<p style="text-align: center; color: var(--muted);">No items available</p>';
+          return;
+        }
+
+        const itemIcons = {
+          'Apple': '🍎',
+          'Fish': '🐟',
+          'Energy Drink': '⚡',
+          'Salad': '🥗',
+          'Cake': '🍰',
+          'Steak': '🥩'
+        };
+
+        container.innerHTML = items.map(item => {
+          const icon = itemIcons[item.name] || '🍽️';
+          const coins = parseInt(document.getElementById('feedModalCoins').textContent);
+          const canAfford = coins >= item.price;
+
+          return `
+            <div class="feed-item">
+              <div class="feed-item-icon">${icon}</div>
+              <div class="feed-item-name">${item.name}</div>
+              <div class="feed-item-effect">+${item.effect_value} ${item.effect_stat}</div>
+              <div class="feed-item-price"><span>💰</span>${item.price}</div>
+              <button class="feed-buy-btn"
+                ${!canAfford ? 'disabled' : ''}
+                onclick="feedPetWithItem(${item.id}, '${item.name}', ${item.price})">
+                ${canAfford ? 'Feed' : 'Not Enough'}
+              </button>
+            </div>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error loading feed shop:', error);
+        document.getElementById('feedShopItems').innerHTML = '<p style="color: red; text-align: center;">Error loading items</p>';
+      }
+    }
+
+    async function feedPetWithItem(itemId, itemName, price) {
+      try {
+        const token = localStorage.getItem('access_token');
+        const msgEl = document.getElementById('feedModalMessage');
+
+        const response = await fetch('/api/food/shop/feed', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ item_id: itemId })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || 'Failed to feed pet');
+        }
+
+        const result = await response.json();
+
+        msgEl.className = 'feed-message success';
+        msgEl.textContent = `✓ Fed ${itemName}! +${result.effect_value} ${result.effect_stat}`;
+
+        await loadFeedShopItems();
+        await loadPetData();
+        await loadUserData();
+
+        setTimeout(() => {
+          msgEl.className = 'feed-message';
+        }, 3000);
+
+      } catch (error) {
+        const msgEl = document.getElementById('feedModalMessage');
+        msgEl.className = 'feed-message error';
+        msgEl.textContent = `✗ ${error.message}`;
+      }
+    }
+
+    function showMealModal() {
+      window.location.href = '/meals';
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    // ── Initialize on page load ──
     window.addEventListener('DOMContentLoaded', () => {
-      loadPetData();
+      loadPetTypes();
+      setTimeout(() => loadPetData(), 300);
       loadUserData();
       setInterval(loadPetData, 30000);
+      setInterval(loadUserData, 30000);
     });
-
-    function showFeedModal()  { alert('Feed pet — redirect to shop or modal'); }
-    function showMealModal()  { alert('Log meal — show form to log meals'); }
   </script>
 </body>
 </html>

@@ -1101,6 +1101,7 @@
 
       const completedCount = payload.filter(p => p.completed).length;
       const xpAwarded      = completedCount * 15;
+      let resultXP = xpAwarded;
       const msgEl          = document.getElementById('split-message-container');
       const btn            = document.getElementById('finishBtn');
 
@@ -1117,14 +1118,20 @@
           body: JSON.stringify({ split: activeSplit, exercises: payload })
         });
 
-        // Handle success even if API not wired yet
+        let resultXP = xpAwarded;
+        let resultCoins = 0;
+        if (response.ok) {
+          const result = await response.json();
+          resultXP = result.xp_awarded || xpAwarded;
+          resultCoins = result.coins_awarded || 0;
+        }
+
         msgEl.innerHTML = `
           <div class="alert alert-success" style="display:block;">
-            ✅ ${split.label} complete! You crushed ${completedCount}/${payload.length} exercises and earned <strong>${xpAwarded} XP</strong>! 🎉
+            ✅ ${split.label} complete! You crushed ${completedCount}/${payload.length} exercises and earned <strong>+${resultXP} XP</strong> and <strong>+${resultCoins} 💰</strong>! 🎉
           </div>`;
 
-        // Floating XP
-        showXpFloat('+' + xpAwarded + ' XP');
+        showXpFloat('+' + resultXP + ' XP');
         loadStats();
         loadRecentWorkouts();
 
@@ -1133,7 +1140,7 @@
         msgEl.innerHTML = `<div class="alert alert-danger" style="display:block;">✗ ${err.message}</div>`;
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '🏆 Finish Workout <span class="xp-preview" id="xp-preview">+' + xpAwarded + ' XP</span>';
+        btn.innerHTML = '🏆 Finish Workout <span class="xp-preview" id="xp-preview">+' + resultXP + ' XP</span>';
       }
     }
 
@@ -1268,7 +1275,7 @@
             <div class="workout-item">
               <div class="workout-header">
                 <div class="workout-name">${w.exercise_name}</div>
-                <div class="workout-xp">+${Math.round(w.duration_mins * 1.5)} XP</div>
+                <div class="workout-xp">+${Math.round(w.duration_mins)} XP</div>
               </div>
               <div class="workout-details">
                 <span>⏱️ ${w.duration_mins}min</span>
