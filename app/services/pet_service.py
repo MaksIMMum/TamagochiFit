@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from datetime import datetime, timezone
+import random
 
 from app.models.pet import Pet
 from app.schemas.pet import PetCreate
-
+from app.config.pet_types import get_pet_type, get_species_for_level
 
 # ── XP / levelling ────────────────────────────────────────────────────────────
 
@@ -12,36 +13,17 @@ def _xp_for_next_level(level: int) -> float:
     """XP needed to reach the next level (level * 100)."""
     return level * 100.0
 
-
-LEVEL_SPECIES: dict[int, str] = {
-    1:  "egg",
-    2:  "cracked_egg",
-    3:  "chick",
-    5:  "kitten",
-    8:  "cat",
-    12: "cool_cat",
-}
-
-def _species_for_level(level: int) -> str:
-    """Return the species string for a given level."""
-    species = "egg"
-    for threshold, name in sorted(LEVEL_SPECIES.items()):
-        if level >= threshold:
-            species = name
-    return species
-
-
 def check_level_up(pet: Pet) -> None:
     """Increment level (and update species) while XP exceeds the threshold."""
     while pet.xp >= _xp_for_next_level(pet.level):
         pet.xp -= _xp_for_next_level(pet.level)
         pet.level += 1
-    pet.species = _species_for_level(pet.level)
 
+    species_data = get_species_for_level(pet.pet_type, pet.level)
+    pet.species = species_data["species"]
 
-# ── Stat decay ────────────────────────────────────────────────────────────────
+# ── Stat ────────────────────────────────────────────────────────────────
 
-# How many points each stat loses per hour of inactivity
 DECAY_PER_HOUR = {
     "health":    2.0,
     "happiness": 3.0,
@@ -68,11 +50,14 @@ def apply_decay(pet: Pet) -> None:
 
     pet.last_interacted = now
 
-
 # ── CRUD ──────────────────────────────────────────────────────────────────────
 
 def create_pet(db: Session, user_id: int, pet_data: PetCreate) -> Pet:
-    """Create a new pet for a user. Raises 400 if the user already has one."""
+    """
+    Create a new pet for a user.
+    Raises 400 if the user already has one.
+    Randomly picks a pet_type if not specified.
+    """
     existing = db.query(Pet).filter(Pet.user_id == user_id).first()
     if existing:
         raise HTTPException(
@@ -80,16 +65,33 @@ def create_pet(db: Session, user_id: int, pet_data: PetCreate) -> Pet:
             detail="User already has a pet"
         )
 
+    # Use provided pet_type or randomly select one
+    pet_type = pet_data.pet_type
+    if not pet_type or pet_type == "random":
+        # Randomly pick from available types
+        from app.config.pet_types import PET_TYPES
+        pet_type = random.choice(list(PET_TYPES.keys()))
+
+    try:
+        get_pet_type(pet_type)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid pet type: {pet_type}"
+        )
+
+    species_data = get_species_for_level(pet_type, 1)
+
     pet = Pet(
         user_id=user_id,
         name=pet_data.name,
-        species=_species_for_level(1),
+        pet_type=pet_type,  # ← NEW
+        species=species_data["species"],
     )
     db.add(pet)
     db.commit()
     db.refresh(pet)
     return pet
-
 
 def get_pet_by_user_id(db: Session, user_id: int) -> Pet:
     """
@@ -109,7 +111,6 @@ def get_pet_by_user_id(db: Session, user_id: int) -> Pet:
     db.refresh(pet)
     return pet
 
-
 def award_xp(db: Session, user_id: int, xp_amount: float) -> Pet:
     """Award XP to a user's pet and trigger a level-up check."""
     pet = db.query(Pet).filter(Pet.user_id == user_id).first()
@@ -125,7 +126,6 @@ def award_xp(db: Session, user_id: int, xp_amount: float) -> Pet:
     db.commit()
     db.refresh(pet)
     return pet
-
 
 def update_pet_stats(
     db: Session,

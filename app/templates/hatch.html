@@ -10,7 +10,7 @@
   <script src="/static/js/auth.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     :root {
       --purple-dark: #5b2dd6;
       --purple-mid: #7b55b8;
@@ -142,7 +142,6 @@
     .character-reveal {
       width: 250px;
       height: 250px;
-      font-size: 180px;
       animation: hatchReveal 1s ease-out forwards;
       filter: drop-shadow(0 10px 30px rgba(91, 45, 214, 0.3));
     }
@@ -283,26 +282,26 @@
       </div>
 
       <!-- Stage 2: Hatching Animation -->
+      <!-- Stage 2: Hatching Animation -->
       <div class="stage hatching-stage hidden" id="hatchingStage">
         <div class="celebration">🎉</div>
         <h2>It's Hatching!</h2>
         <p>Your companion is being born...</p>
-        <div class="character-reveal" id="characterReveal">🐣</div>
+        <img id="characterReveal" src="" alt="Character" class="character-reveal" style="object-fit: contain;">
         <div class="celebration">✨</div>
       </div>
-
       <!-- Stage 3: Name Your Pet -->
       <div class="stage name-stage hidden" id="nameStage">
         <h2>Meet Your New Friend!</h2>
         <img src="/static/images/character1.gif" alt="Character">
         <p>Give your companion a name to begin your journey together</p>
-        
+
         <form id="nameForm">
           <div class="form-group">
             <label for="petName">Choose a Name</label>
-            <input 
-              type="text" 
-              id="petName" 
+            <input
+              type="text"
+              id="petName"
               placeholder="e.g., Buddy"
               minlength="1"
               maxlength="20"
@@ -365,11 +364,42 @@
       }
     });
 
+
+    // === Pet Type Selection ===
+    let selectedPetType = null;
+    let petTypesData = [];
+
+    async function loadPetTypes() {
+      try {
+        const response = await fetch('/api/pet-types/');
+        if (response.ok) {
+          petTypesData = await response.json();
+          console.log('Pet types loaded:', petTypesData);
+        }
+      } catch (e) {
+        console.error('Failed to load pet types:', e);
+      }
+    }
+
+    function getRandomPetType() {
+      if (petTypesData.length === 0) return 'blue';
+      return petTypesData[Math.floor(Math.random() * petTypesData.length)].id;
+    }
+
+    function getPetTypeImage(petTypeId) {
+      const petType = petTypesData.find(p => p.id === petTypeId);
+      return petType ? petType.preview_image : '/static/images/characters/blue egg.png';
+    }
+
     // === Hatching Stage ===
     function showHatchingStage() {
       showStage('hatchingStage');
-      
-      // Create multiple sparkles
+
+      selectedPetType = getRandomPetType();
+      const petImage = getPetTypeImage(selectedPetType);
+      document.getElementById('characterReveal').src = petImage;
+      console.log('Selected pet type:', selectedPetType, 'Image:', petImage);
+
       for (let i = 0; i < 10; i++) {
         setTimeout(() => {
           const x = Math.random() * window.innerWidth;
@@ -378,7 +408,6 @@
         }, i * 200);
       }
 
-      // Move to naming after 3 seconds
       setTimeout(() => showStage('nameStage'), 3000);
     }
 
@@ -409,13 +438,15 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ name: petName, species: 'egg' })
+          body: JSON.stringify({
+            name: petName,
+            pet_type: selectedPetType || 'blue'
+          })
         });
 
         if (!response.ok) {
           const data = await response.json();
 
-          // If user already has a pet, redirect to home
           if (response.status === 400 && data.detail === 'User already has a pet') {
             window.location.href = '/home';
             return;
@@ -424,7 +455,6 @@
           throw new Error(data.detail || 'Failed to create pet');
         }
 
-        // Success - redirect to home
         window.location.href = '/home';
 
       } catch (err) {
@@ -434,6 +464,8 @@
         submitBtn.textContent = 'Start Journey!';
       }
     });
+
+    loadPetTypes();
   </script>
 </body>
 </html>
