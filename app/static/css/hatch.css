@@ -1,100 +1,257 @@
-/* Загальні стилі */
-body {
-  margin: 0;
-  font-family: "Press Start 2P", sans-serif;
-  background: linear-gradient(135deg, #dcb1ff, #ffe680, #faf5ff);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
 
-.container {
-  width: 100%;
-  max-width: 400px;
-  padding: 16px;
-}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  padding: 24px;
-  text-align: center;
-}
+    :root {
+      --purple-dark: #5b2dd6;
+      --purple-mid: #7b55b8;
+      --purple-light: #a070e0;
+      --purple-ultra-light: #ddd0f5;
+      --pink: #e05c7a;
+      --yellow: #ffd93d;
+      --cream: #fff5e1;
+      --text-dark: #2a1a50;
+    }
 
-.hidden {
-  display: none;
-}
+    body {
+      font-family: 'Pixelify Sans', sans-serif;
+      background: linear-gradient(135deg, #dcb1ff 0%, #ffe680 50%, #ffc0dd 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
 
-h1, h2 {
-  color: #5b2dd6;
-  line-height: 1.5;
-}
+    /* Sparkles animation */
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
 
-p {
-  color: #7d5dd6;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
+    .sparkle {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      animation: sparkle 1s ease-out forwards;
+    }
 
-/* Яйце */
-.egg-wrapper {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
+    .container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
 
-#eggImage {
-  width: 150px;
-  transition: transform 0.2s;
-}
+    .card {
+      background: white;
+      border-radius: 30px;
+      padding: 50px 40px;
+      box-shadow: 0 20px 60px rgba(91, 45, 214, 0.2);
+      border: 4px solid var(--purple-ultra-light);
+    }
 
-#eggImage:active {
-  transform: scale(1.1); /* ефект натискання */
-}
+    .stage {
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* Вилуплення */
-.hatching-stage .character {
-  width: 200px; /* під GIF або картинку персонажа */
-  animation: appear 0.5s forwards;
-}
+    .hidden {
+      display: none !important;
+    }
 
-@keyframes appear {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+    h1, h2 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--purple-dark);
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
 
-/* Ім'я персонажа */
-.name-stage img {
-  width: 150px; /* можна змінити під твій GIF */
-  margin-bottom: 16px;
-}
+    h1 { font-size: 28px; }
+    h2 { font-size: 24px; }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    p {
+      color: var(--purple-mid);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      font-weight: 500;
+    }
 
-input {
-  padding: 12px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: 2px solid #dcb1ff;
-  text-align: center;
-}
+    /* Egg Stage */
+    .egg-wrapper {
+      position: relative;
+      margin: 30px 0;
+    }
 
-button {
-  padding: 14px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: none;
-  color: white;
-  background: linear-gradient(to right, #8b5cf6, #5b2dd6);
-  cursor: pointer;
-}
+    #eggImage {
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 10px 30px rgba(91, 45, 214, 0.3));
+      user-select: none;
+    }
 
-button:hover {
-  background: linear-gradient(to right, #5b2dd6, #3a1a9c);
-}
+    #eggImage:hover {
+      transform: scale(1.05);
+    }
+
+    #eggImage:active {
+      transform: scale(0.95);
+    }
+
+    .click-prompt {
+      font-size: 18px;
+      color: var(--purple-dark);
+      font-weight: 700;
+      margin-top: 20px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .click-count {
+      display: inline-block;
+      background: var(--purple-ultra-light);
+      padding: 12px 25px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--purple-dark);
+      margin-top: 20px;
+      border: 3px solid var(--purple-light);
+    }
+
+    /* Hatching Stage */
+    .character-reveal {
+      width: 250px;
+      height: 250px;
+      animation: hatchReveal 1s ease-out forwards;
+      filter: drop-shadow(0 10px 30px rgba(91, 45, 214, 0.3));
+    }
+
+    @keyframes hatchReveal {
+      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+      60% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .celebration {
+      font-size: 50px;
+      margin: 20px 0;
+      animation: bounce 0.6s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Name Stage */
+    .name-stage img {
+      width: 180px;
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 3px solid var(--purple-ultra-light);
+      border-radius: 12px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 18px;
+      color: var(--text-dark);
+      background: #fafafa;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--purple-mid);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(123, 85, 184, 0.1);
+    }
+
+    .error-message {
+      color: var(--pink);
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-mid) 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(91, 45, 214, 0.3);
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(91, 45, 214, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 40px 25px;
+      }
+
+      h1 { font-size: 22px; }
+      h2 { font-size: 20px; }
+
+      #eggImage {
+        width: 160px;
+        height: 160px;
+      }
+
+      .character-reveal {
+        width: 200px;
+        height: 200px;
+        font-size: 140px;
+      }
+    }
