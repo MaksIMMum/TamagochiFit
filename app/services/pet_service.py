@@ -67,6 +67,7 @@ def create_pet(db: Session, user_id: int, pet_data: PetCreate) -> Pet:
 
     # Use provided pet_type or randomly select one
     pet_type = pet_data.pet_type
+
     if not pet_type or pet_type == "random":
         # Randomly pick from available types
         from app.config.pet_types import PET_TYPES
@@ -85,7 +86,7 @@ def create_pet(db: Session, user_id: int, pet_data: PetCreate) -> Pet:
     pet = Pet(
         user_id=user_id,
         name=pet_data.name,
-        pet_type=pet_type,  # ← NEW
+        pet_type=pet_type,
         species=species_data["species"],
     )
     db.add(pet)

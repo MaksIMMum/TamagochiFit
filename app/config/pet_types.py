@@ -25,7 +25,7 @@ PET_TYPES = {
             5: {"species": "teen", "emoji": "🐦", "image": "/static/images/characters/cherry teen.png"},
             8: {"species": "adult", "emoji": "🦅", "image": "/static/images/characters/cherry adult.png"},
             12: {"species": "final_form", "emoji": "✨", "image": "/static/images/characters/cherry adult.png"},  # fallback
-        }   
+        }
     },
     "cyan": {
         "name": "Cyan Pet",
@@ -85,15 +85,7 @@ def get_pet_type(pet_type_id: str) -> Dict:
 
 def get_all_pet_types() -> List[Dict]:
     """Return list of all available pet types with basic info."""
-    return [
-        {
-            "id": key,
-            "name": value["name"],
-            "emoji": value["emoji"],
-            "preview_image": value["evolution_chain"][3]["image"]  # Show kid stage as preview
-        }
-        for key, value in PET_TYPES.items()
-    ]
+    return PET_TYPES
 
 def get_species_for_level(pet_type_id: str, level: int) -> Dict:
     """

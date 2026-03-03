@@ -14,7 +14,7 @@ class Pet(Base):
 
     # Pet characteristics
     name = Column(String(50), nullable=False)
-    pet_type = Column(String(50), default="cat")
+    pet_type = Column(String(50), default="blue")
     species = Column(String(50), default="egg")
 
     # Progress

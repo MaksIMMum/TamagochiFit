@@ -6,14 +6,14 @@ from typing import Optional
 class PetCreate(BaseModel):
     """Schema for creating a pet"""
     name: str = Field(..., min_length=1, max_length=50)
-    pet_type: str = Field(default="cat", max_length=50)
+    pet_type: str = Field(default="blue", max_length=50)
     species: Optional[str] = Field("egg", max_length=50)
 
     class Config:
         json_schema_extra = {
             "example": {
                 "name": "Felix",
-                "pet_type": "cat",
+                "pet_type": "blue",
                 "species": "egg"
             }
         }

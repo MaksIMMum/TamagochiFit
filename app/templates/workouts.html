@@ -785,9 +785,7 @@
             </div>
 
             <!-- Finish workout -->
-            <button class="finish-btn" id="finishBtn" onclick="finishSplit()"
-                    hx-post="/api/splits/finish" hx-trigger="none"
-                    hx-include="#split-exercise-list" hx-target="#split-message-container" hx-swap="innerHTML">
+            <button class="finish-btn" id="finishBtn" onclick="finishSplit()">
               🏆 Finish Workout
               <span class="xp-preview" id="xp-preview">+0 XP</span>
             </button>
@@ -1082,68 +1080,124 @@
     }
 
     // ── Finish Split ──────────────────────────────────────────
+// ── Finish Split ──────────────────────────────────────────
     async function finishSplit() {
       if (!activeSplit) return;
-      const split    = SPLITS[activeSplit];
-      const rows     = document.querySelectorAll('.exercise-row');
-      const payload  = [];
+      const split = SPLITS[activeSplit];
+      const rows = document.querySelectorAll('.exercise-row');
 
+      let completedCount = 0;
+      let totalReps = 0;
+      let totalSets = 0;
+
+      // Count completed exercises and aggregate sets/reps for the log
       rows.forEach((row, i) => {
-        payload.push({
-          exercise_name:    split.exercises[i].name,
-          muscle_group:     split.exercises[i].muscle.toLowerCase(),
-          sets:             parseInt(row.querySelector(`input[name="sets_${i}"]`).value) || 0,
-          reps:             parseInt(row.querySelector(`input[name="reps_${i}"]`).value) || 0,
-          weight:           parseFloat(row.querySelector(`input[name="weight_${i}"]`).value) || 0,
-          completed:        row.classList.contains('completed')
-        });
+        if (row.classList.contains('completed')) {
+          completedCount++;
+          totalSets += parseInt(row.querySelector(`input[name="sets_${i}"]`).value) || 0;
+          totalReps += parseInt(row.querySelector(`input[name="reps_${i}"]`).value) || 0;
+        }
       });
 
-      const completedCount = payload.filter(p => p.completed).length;
-      const xpAwarded      = completedCount * 15;
-      let resultXP = xpAwarded;
-      const msgEl          = document.getElementById('split-message-container');
-      const btn            = document.getElementById('finishBtn');
+      if (completedCount === 0) {
+        const msgEl = document.getElementById('split-message-container');
+        msgEl.innerHTML = `<div class="alert alert-danger" style="display:block;">⚠️ Please complete at least one exercise!</div>`;
+        setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+        return;
+      }
+
+      // Calculate rewards
+      const estimatedDuration = completedCount * 5.0; // Assume 5 mins per exercise
+      const coinsEarned = completedCount * 5;
+      const targetXp = completedCount * 15.0;
+
+      const msgEl = document.getElementById('split-message-container');
+      const btn = document.getElementById('finishBtn');
 
       btn.disabled = true;
       btn.textContent = '⏳ Submitting...';
 
       try {
-        const response = await fetch('/api/splits/finish', {
+        // 1. Log the workout to the standard endpoint to update streak and history
+        const logResponse = await fetch('/api/workout/log', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
           },
-          body: JSON.stringify({ split: activeSplit, exercises: payload })
+          body: JSON.stringify({
+            exercise_name: `${split.label} Quest`,
+            muscle_group: activeSplit === 'full' ? 'full_body' : activeSplit,
+            duration_mins: estimatedDuration,
+            sets: totalSets,
+            reps: totalReps,
+            notes: `Completed ${completedCount} exercises in the ${split.label} quest.`
+          })
         });
 
-        let resultXP = xpAwarded;
-        let resultCoins = 0;
-        if (response.ok) {
-          const result = await response.json();
-          resultXP = result.xp_awarded || xpAwarded;
-          resultCoins = result.coins_awarded || 0;
+        if (!logResponse.ok) {
+          const err = await logResponse.json();
+          throw new Error(err.detail || 'Failed to log workout history');
         }
 
+        // Extract XP awarded from the standard logging to avoid double-awarding XP
+        const logResult = await logResponse.json();
+        const baseXP = logResult.xp_awarded || 0;
+        const remainingXP = Math.max(0, targetXp - baseXP);
+
+        // 2. Call the custom splits endpoint for coins and any remaining XP
+        const splitResponse = await fetch('/api/splits/finish', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            split_name: split.label,
+            duration_mins: estimatedDuration,
+            coins_earned: coinsEarned,
+            xp_earned: remainingXP
+          })
+        });
+
+        if (!splitResponse.ok) {
+          const err = await splitResponse.json();
+          throw new Error(err.detail || 'Failed to process split rewards');
+        }
+
+        const splitResult = await splitResponse.json();
+
+        // Display success message
         msgEl.innerHTML = `
           <div class="alert alert-success" style="display:block;">
-            ✅ ${split.label} complete! You crushed ${completedCount}/${payload.length} exercises and earned <strong>+${resultXP} XP</strong> and <strong>+${resultCoins} 💰</strong>! 🎉
+            ✅ Quest Complete!<br>
+            You earned <strong>+${targetXp} XP</strong> and <strong>+${coinsEarned} 💰</strong>! 🎉<br>
+            <small>Total Coins: ${splitResult.new_coins_total} | Pet Level: ${splitResult.pet_level || logResult.pet_level}</small>
           </div>`;
 
-        showXpFloat('+' + resultXP + ' XP');
+        showXpFloat('+' + targetXp + ' XP');
+
+        // Reload statistics to instantly reflect the new entry
         loadStats();
         loadRecentWorkouts();
 
-        setTimeout(() => { msgEl.innerHTML = ''; }, 6000);
+        // Reset the UI tracking
+        setTimeout(() => {
+          msgEl.innerHTML = '';
+          document.querySelectorAll('.split-card').forEach(c => c.classList.remove('selected'));
+          document.getElementById('split-routine').classList.remove('visible');
+          activeSplit = null;
+        }, 6000);
+
       } catch (err) {
         msgEl.innerHTML = `<div class="alert alert-danger" style="display:block;">✗ ${err.message}</div>`;
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = '🏆 Finish Workout <span class="xp-preview" id="xp-preview">+' + resultXP + ' XP</span>';
+        if (activeSplit) {
+          btn.disabled = false;
+          btn.innerHTML = `🏆 Finish Workout <span class="xp-preview" id="xp-preview">+${targetXp} XP</span>`;
+        }
       }
     }
-
     function showXpFloat(text) {
       const el = document.createElement('div');
       el.className = 'xp-float';
