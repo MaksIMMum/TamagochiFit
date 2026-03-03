@@ -1,0 +1,337 @@
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #eae6f0;
+      --surface: #f2f0f7;
+      --card: #e8e2f5;
+      --purple: #7b55b8;
+      --purple-dark: #5b2dd6;
+      --purple-light: #a070e0;
+      --text: #2a1a50;
+      --muted: #a898cc;
+      --accent: #ffd93d;
+      --cream: #fff8e1;
+      --pink: #e05c7a;
+      --success: #4caf50;
+    }
+
+    body { font-family:'Pixelify Sans',sans-serif; background:var(--bg); min-height:100vh; display:flex; flex-direction:column; }
+
+    /* ── Pixel Bar ── */
+    .pixel-bar {
+      height: 8px;
+      width: 100%;
+      display: block;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  10px,
+        var(--purple-light) 10px, var(--purple-light) 20px,
+        var(--accent)       20px, var(--accent)       28px,
+        var(--cream)        28px, var(--cream)        36px,
+        var(--pink)         36px, var(--pink)         44px,
+        var(--purple-light) 44px, var(--purple-light) 54px
+      );
+    }
+
+    /* ── Navbar ── */
+    .navbar { background:var(--surface); border-bottom:3px solid var(--card); padding:0 30px; box-shadow:0 2px 10px rgba(123,85,184,.08); position:sticky; top:0; z-index:100; }
+    .nav-content { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { font-family:'Press Start 2P',cursive; font-size:16px; color:var(--text); text-decoration:none; }
+    .nav-logo span { color:var(--purple); }
+    .nav-links { display:flex; gap:4px; list-style:none; }
+    .nav-links a { display:flex; align-items:center; gap:5px; padding:9px 14px; border-radius:12px; text-decoration:none; font-size:13px; font-weight:600; color:var(--muted); transition:all .2s; }
+    .nav-links a:hover  { background:var(--card); color:var(--text); }
+    .nav-links a.active { background:var(--purple); color:white; }
+    .nav-user { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--text); }
+    .nav-avatar { width:36px; height:36px; background:var(--purple); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; }
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; background:none; border:none; }
+    .hamburger span { display:block; width:24px; height:3px; background:var(--text); border-radius:2px; }
+    .mobile-menu { display:none; flex-direction:column; background:var(--surface); border-bottom:3px solid var(--card); padding:12px 20px 16px; gap:6px; position:sticky; top:64px; z-index:99; box-shadow:0 4px 12px rgba(123,85,184,.10); }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; text-decoration:none; font-size:15px; font-weight:700; color:var(--muted); transition:all .15s; }
+    .mobile-menu a:hover  { background:var(--card); color:var(--text); }
+    .mobile-menu a.active { background:var(--purple); color:white; }
+
+    /* ── Main ── */
+    .main-content { flex:1; max-width:1200px; width:100%; margin:0 auto; padding:30px 20px 40px; }
+
+    /* ── Profile Header ── */
+    .profile-header {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Vertical pixel bar on left edge of profile header */
+    .profile-header::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 8px;
+      background-image: repeating-linear-gradient(
+        180deg,
+        var(--purple-dark)  0px,  var(--purple-dark)  12px,
+        var(--accent)       12px, var(--accent)        20px,
+        var(--pink)         20px, var(--pink)          28px,
+        var(--purple-light) 28px, var(--purple-light)  40px,
+        var(--cream)        40px, var(--cream)         48px
+      );
+      border-radius: 22px 0 0 22px;
+    }
+
+    .profile-avatar-large {
+      width:150px; height:150px;
+      background:linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-light) 100%);
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:70px; color:white; font-weight:700;
+      box-shadow:0 8px 30px rgba(123,85,184,.3);
+      flex-shrink:0;
+    }
+
+    .profile-info { flex:1; padding-left: 8px; }
+    .profile-name  { font-family:'Press Start 2P',cursive; font-size:30px; color:var(--text); margin-bottom:10px; }
+    .profile-email { font-size:16px; color:var(--muted); margin-bottom:20px; }
+
+    .profile-badges { display:flex; gap:12px; flex-wrap:wrap; }
+    .badge { background:var(--card); padding:10px 20px; border-radius:20px; font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; }
+    .badge.premium  { background:var(--accent); }
+    .badge.verified { background:var(--success); color:white; }
+
+    /* ── Stats ── */
+    .stats-section  { margin-bottom:30px; }
+    .section-title  { font-size:22px; font-weight:700; color:var(--text); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+      text-align: center;
+    }
+
+    .stat-icon  { font-size:44px; margin-bottom:12px; }
+    .stat-value { font-size:30px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .stat-label { font-size:14px; color:var(--muted); font-weight:600; }
+
+    /* ── Evolution Skill Tree ─────────────────────────────── */
+    .pet-journey {
+      background: var(--surface);
+      border-radius: 25px;
+      padding: 36px;
+      box-shadow: 0 4px 20px rgba(123,85,184,.1);
+      border: 3px solid var(--card);
+    }
+
+    .journey-subtitle { color:var(--muted); margin-bottom:30px; font-size:15px; line-height:1.6; }
+
+    /* The skill tree container */
+    .skill-tree {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Vertical spine */
+    .skill-tree::before {
+      content: '';
+      position: absolute;
+      left: 42px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: repeating-linear-gradient(
+        180deg,
+        var(--purple-light) 0px, var(--purple-light) 8px,
+        transparent 8px, transparent 14px
+      );
+      border-radius: 2px;
+      z-index: 0;
+    }
+
+    /* Each evolution stage row */
+    .evo-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 14px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Circle node on the spine */
+    .evo-node {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      border: 4px solid var(--card);
+      background: white;
+      box-shadow: 0 2px 8px rgba(123,85,184,.10);
+      transition: all 0.3s;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Horizontal connector from node to card */
+    .evo-connector {
+      width: 24px; height: 4px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      background: var(--card);
+      transition: background 0.3s;
+    }
+
+    /* Stage info card */
+    .evo-card {
+      flex: 1;
+      background: white;
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 3px solid var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all 0.2s;
+      opacity: 0.45;
+    }
+
+    .evo-card-info { flex: 1; }
+    .evo-card-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .evo-card-req  { font-size:13px; color:var(--muted); font-weight:600; }
+
+    .evo-badge {
+      padding: 7px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--muted);
+      color: white;
+      white-space: nowrap;
+    }
+
+    /* ── COMPLETED stage ── */
+    .evo-row.completed .evo-node {
+      background: linear-gradient(135deg, #4caf50, #66bb6a);
+      border-color: #4caf50;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(76,175,80,.35);
+    }
+    .evo-row.completed .evo-connector { background: #4caf50; }
+    .evo-row.completed .evo-card      { opacity:1; border-color: #4caf50; background: #f4fdf7; }
+    .evo-row.completed .evo-badge     { background: #4caf50; }
+
+    /* ── CURRENT (active) stage ── */
+    .evo-row.current .evo-node {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple-light));
+      border-color: var(--purple);
+      color: white;
+      box-shadow: 0 0 0 4px rgba(123,85,184,.25), 0 4px 14px rgba(123,85,184,.3);
+      animation: pulse-node 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-node {
+      0%,100% { box-shadow: 0 0 0 4px rgba(123,85,184,.25), 0 4px 14px rgba(123,85,184,.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(123,85,184,.15), 0 4px 20px rgba(123,85,184,.4); }
+    }
+
+    .evo-row.current .evo-connector { background: var(--purple); }
+    .evo-row.current .evo-card {
+      opacity:1;
+      border-color: var(--purple);
+      box-shadow: 0 4px 16px rgba(123,85,184,.18);
+    }
+    .evo-row.current .evo-badge {
+      background: var(--purple);
+      animation: badge-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes badge-bounce {
+      0%,100% { transform:scale(1); }
+      50%      { transform:scale(1.06); }
+    }
+
+    /* ── LOCKED stages are default (semi-transparent) ── */
+
+    /* XP progress between current and next unlock */
+    .evo-xp-bar-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 0 0 0 104px;
+      margin-top: -6px;
+      margin-bottom: 4px;
+      width: 100%;
+    }
+
+    .evo-row.current + .evo-xp-bar-wrap { display: flex; }
+
+    .evo-xp-track {
+      flex: 1;
+      height: 8px;
+      background: var(--card);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .evo-xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--purple-light));
+      border-radius: 6px;
+      transition: width 0.6s ease;
+    }
+
+    .evo-xp-label { font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap; }
+
+    /* ── Actions ── */
+    .action-buttons { display:flex; gap:15px; margin-top:24px; }
+    .action-btn {
+      flex:1; padding:15px;
+      background:var(--card); color:var(--text);
+      border:2px solid var(--card); border-radius:12px;
+      font-family:'Pixelify Sans',sans-serif; font-size:15px; font-weight:700;
+      cursor:pointer; transition:all .2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .action-btn:hover { border-color:var(--purple); transform:translateY(-2px); }
+    .action-btn.danger { color:var(--pink); }
+
+    /* ── Responsive ── */
+    @media (max-width:768px) {
+      .profile-header { flex-direction:column; text-align:center; }
+      .profile-header::before { display:none; }
+      .profile-name { font-size:22px; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .action-buttons { flex-direction:column; }
+      .skill-tree::before { left:34px; }
+      .evo-node { width:48px; height:48px; font-size:24px; }
+    }
+
+    @media (max-width:640px) {
+      .nav-links { display:none; }
+      .hamburger { display:flex; }
+      .main-content { padding-bottom:80px; }
+    }

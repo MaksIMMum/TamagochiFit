@@ -1,16 +1,25 @@
-async function handleRegister(event) {
-  event.preventDefault();
 
-  const username         = document.getElementById("username").value;
-  const email            = document.getElementById("email").value;
-  const password         = document.getElementById("password").value;
-  const fullName         = document.getElementById("fullName").value;
-  const messageContainer = document.getElementById("message-container");
-  console.log("Function reached, username:", username);
+const form = document.getElementById('registerForm');
+const submitBtn = document.getElementById('submitBtn');
+const messageContainer = document.getElementById('message-container');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const fullName = document.getElementById('fullName').value;
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Creating account...';
+  messageContainer.innerHTML = '';
+
   try {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    // Registration request
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username,
         email,
@@ -21,47 +30,45 @@ async function handleRegister(event) {
 
     if (!response.ok) {
       const error = await response.json();
-      messageContainer.innerHTML = `
-        <div class="alert alert-danger" role="alert">
-          ${error.detail || "Registration failed"}
-        </div>`;
-      return;
+      throw new Error(error.detail || 'Registration failed');
     }
 
-    console.log("✅ Registration successful, attempting auto-login...");
-    messageContainer.innerHTML = `<div class="alert alert-success">Account created! Logging you in...</div>`;
+    messageContainer.innerHTML = `
+      <div class="alert alert-success" style="display: block;">
+        ✓ Account created! Logging you in...
+      </div>
+    `;
 
-    const loginResponse = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    // Auto-login after successful registration
+    const loginResponse = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
 
-    console.log("Login response status:", loginResponse.status);
+    if (loginResponse.ok) {
+      const data = await loginResponse.json();
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('refresh_token', data.refresh_token);
+      localStorage.setItem('token_type', data.token_type);
 
-    if (!loginResponse.ok) {
-      const loginError = await loginResponse.json();
-      console.error("❌ Auto-login failed:", loginError);
-      setTimeout(() => window.location.href = "/login", 1500);
-      return;
+      setTimeout(() => {
+        window.location.href = '/hatch';
+      }, 1000);
+    } else {
+      // Registration succeeded but auto-login failed
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
     }
 
-    const data = await loginResponse.json();
-    console.log("✅ Auto-login successful, token received:", !!data.access_token);
-
-    localStorage.setItem("access_token",  data.access_token);
-    localStorage.setItem("refresh_token", data.refresh_token);
-    localStorage.setItem("token_type",    data.token_type);
-
-    console.log("Token stored, redirecting to /hatch...");
-    setTimeout(() => window.location.href = "/hatch", 800);
-
   } catch (error) {
-    console.error("❌ Caught error:", error);
-    messageContainer.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+    messageContainer.innerHTML = `
+      <div class="alert alert-danger" style="display: block;">
+        ✗ ${error.message}
+      </div>
+    `;
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Create Account';
   }
-}
-
-function goToLogin() {
-  window.location.href = "/login";
-}
+});
